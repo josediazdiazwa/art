@@ -32,12 +32,13 @@ var parseFontString = function(font){
 	};
 };
 
-ART.Font = new Class({
-	
-	Extends: ART.Shape,
+ART.Font = ART.Class(ART.Shape, {
+
+	shape_initialize: ART.Shape.prototype.initialize,
+	shape_draw: ART.Shape.prototype.draw,
 	
 	initialize: function(text, font, alignment){
-		this.parent();
+		this.shape_initialize();
 		if (text != null && font != null) this.draw(text, font, alignment);
 	},
 	
@@ -108,7 +109,7 @@ ART.Font = new Class({
 				}
 
 				for (var j = 0; j < parts.length; j++){
-					var c = Array.slice(parts[j]), f = c.shift();
+					var c = Array.prototype.slice.call(parts[j]), f = c.shift();
 					switch (f){
 						case 'l':
 							row += 'l ' + (x + (s * c[0]) - cx) + ',' + (y + (s * c[1]) - cy);
@@ -147,7 +148,7 @@ ART.Font = new Class({
 		if (alignment == 'end' || alignment == 'right') path += 'm' + (-x) + ',0';
 		if (alignment == 'middle' || alignment == 'center') path += 'm' + (-x / 2) + ',0';
 		path += row;
-		this.parent(path, width, height);
+		this.shape_draw(path, width, height);
 		return this;
 	}
 

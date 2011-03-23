@@ -251,19 +251,18 @@ var arc = function(c, cc){
 
 var curve = function(t, q, c){
 	return function(c1x, c1y, c2x, c2y, ex, ey){
-		var args = Array.slice(arguments), l = args.length;
-		args.unshift(l < 4 ? t : l < 6 ? q : c);
-		return this.push.apply(this, args);
+		var l = arguments.length, k = l < 4 ? t : l < 6 ? q : c;
+		return this.push(k, c1x, c1y, c2x, c2y, ex, ey);
 	};
 };
 
 /* Path Class */
 
-ART.Path = new Class({
+ART.Path = ART.Class({
 	
 	initialize: function(path){
 		if (path instanceof ART.Path){ //already a path, copying
-			this.path = Array.slice(path.path);
+			this.path = Array.prototype.slice.call(path.path);
 			this.cache = path.cache;
 		} else {
 			this.path = (path == null) ? [] : parse(path);
@@ -273,7 +272,7 @@ ART.Path = new Class({
 	
 	push: function(){ //modifying the current path resets the memoized values.
 		this.cache = {};
-		this.path.push(Array.slice(arguments));
+		this.path.push(Array.prototype.slice.call(arguments));
 		return this;
 	},
 	
@@ -320,7 +319,7 @@ ART.Path = new Class({
 		var parts = this.path;
 		
 		for (i = 0; i < parts.length; i++){
-			var v = Array.slice(parts[i]), f = v.shift(), l = f.toLowerCase();
+			var v = Array.prototype.slice.call(parts[i]), f = v.shift(), l = f.toLowerCase();
 			var refX = l == f ? X : 0, refY = l == f ? Y : 0;
 			
 			if (l != 'm' && l != 'z' && inX == null){

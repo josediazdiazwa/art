@@ -2,19 +2,35 @@
 ---
 name: ART
 description: "The heart of ART."
-requires: [Core/Class, Color/Color]
+requires: [Color/Color]
 provides: [ART, ART.Element, ART.Container, ART.Transform]
 ...
 */
 
-(function(){
+var ART = function(){
+	this.initialize.apply(this, arguments);
+};
 
-this.ART = new Class;
+(function(){
 
 ART.version = '09.dev';
 ART.build = 'DEV';
 
-ART.Element = new Class({
+ART.Class = function(base){
+	var constructor = function(){};
+	constructor.prototype = typeof base == 'function' ? base.prototype : base;
+	var proto = new constructor();
+	for (var i = 1, l = arguments.length; i < l; i++){
+		var mixin = arguments[i];
+		if (typeof mixin == 'function') mixin = mixin.prototype;
+		for (var key in mixin) proto[key] = mixin[key];
+	}
+	if (proto.initialize) constructor = proto.initialize;
+	constructor.prototype = proto;
+	return constructor;
+};
+
+ART.Element = ART.Class({
 
 	/* dom */
 
@@ -62,7 +78,7 @@ ART.Element = new Class({
 
 });
 
-ART.Container = new Class({
+ART.Container = ART.Class({
 
 	grab: function(){
 		for (var i = 0; i < arguments.length; i++) arguments[i].inject(this);
@@ -86,7 +102,7 @@ var transformTo = function(xx, yx, xy, yy, x, y){
 	return this;
 };
 
-ART.Transform = new Class({
+ART.Transform = ART.Class({
 
 	initialize: transformTo,
 
@@ -192,6 +208,12 @@ ART.Transform = new Class({
 	}
 
 });
+
+var UID = +new Date();
+
+ART.uniqueID = function(){
+	return (UID++).toString(36);
+};
 
 Color.detach = function(color){
 	color = new Color(color);
