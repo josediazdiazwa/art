@@ -3,7 +3,7 @@
 name: ART.SVG
 description: "SVG implementation for ART"
 provides: [ART.SVG, ART.SVG.Group, ART.SVG.Shape, ART.SVG.Image, ART.SVG.Text]
-requires: [ART, ART.Element, ART.Container, ART.Transform, ART.Path]
+requires: [ART, ART.Color, ART.Element, ART.Container, ART.Transform, ART.Path]
 ...
 */
 
@@ -190,7 +190,7 @@ ART.SVG.Base = ART.Class(ART.SVG.Element, {
 		var gradient = this._createBrush(type, style);
 
 		var addColor = function(offset, color){
-			color = Color.detach(color);
+			color = ART.Color.detach(color);
 			var stop = createElement('stop');
 			stop.setAttribute('offset', offset);
 			stop.setAttribute('stop-color', color[0]);
@@ -218,7 +218,7 @@ ART.SVG.Base = ART.Class(ART.SVG.Element, {
 			element.setAttribute(type, 'none');
 			element.removeAttribute(type + '-opacity');
 		} else {
-			color = Color.detach(color);
+			color = ART.Color.detach(color);
 			element.setAttribute(type, color[0]);
 			element.setAttribute(type + '-opacity', color[1]);
 		}
@@ -294,12 +294,12 @@ ART.SVG.Base = ART.Class(ART.SVG.Element, {
 		image.setAttribute('preserveAspectRatio', 'none'); // none, xMidYMid slice, xMidYMid meet
 
 		if (color1 != null){
-			color1 = new Color(color1);
+			color1 = new ART.Color(color1);
 			if (color2 == null){
-				color2 = new Color(color1);
+				color2 = new ART.Color(color1);
 				color2.alpha = 0;
 			} else {
-				color2 = new Color(color2);
+				color2 = new ART.Color(color2);
 			}
 
 			var r = (color1.red - color2.red) / (255 * 3),

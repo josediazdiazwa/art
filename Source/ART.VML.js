@@ -4,7 +4,7 @@ name: ART.VML
 description: "VML implementation for ART"
 authors: ["[Simo Kinnunen](http://twitter.com/sorccu)", "[Valerio Proietti](http://mad4milk.net)", "[Sebastian Markbåge](http://calyptus.eu/)"]
 provides: [ART.VML, ART.VML.Group, ART.VML.Shape, ART.VML.Text]
-requires: [ART, ART.Element, ART.Container, ART.Transform, ART.Path]
+requires: [ART, ART.Color, ART.Element, ART.Container, ART.Transform, ART.Path]
 ...
 */
 
@@ -355,7 +355,7 @@ ART.VML.Base = ART.Class(ART.VML.Element, {
 		var colors = [], color1, color2;
 
 		var addColor = function(offset, color){
-			color = Color.detach(color);
+			color = ART.Color.detach(color);
 			if (color1 == null) color1 = color2 = color;
 			else color2 = color;
 			colors.push(offset + ' ' + color[0]);
@@ -385,7 +385,7 @@ ART.VML.Base = ART.Class(ART.VML.Element, {
 		if (color == null){
 			element.on = false;
 		} else {
-			color = Color.detach(color);
+			color = ART.Color.detach(color);
 			element.color = color[0];
 			element.opacity = color[1];
 			element.on = true;
@@ -462,8 +462,8 @@ ART.VML.Base = ART.Class(ART.VML.Element, {
 	fillImage: function(url, width, height, left, top, color1, color2){
 		var fill = this.fillElement;
 		if (color1 != null){
-			color1 = Color.detach(color1);
-			if (color2 != null) color2 = Color.detach(color2);
+			color1 = ART.Color.detach(color1);
+			if (color2 != null) color2 = ART.Color.detach(color2);
 			fill.type = 'pattern';
 			fill.color = color1[0];
 			fill.color2 = color2 == null ? color1[0] : color2[0];

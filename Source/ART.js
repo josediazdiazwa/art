@@ -2,7 +2,6 @@
 ---
 name: ART
 description: "The heart of ART."
-requires: [Color/Color]
 provides: [ART, ART.Element, ART.Container, ART.Transform]
 ...
 */
@@ -213,11 +212,6 @@ var UID = +new Date();
 
 ART.uniqueID = function(){
 	return (UID++).toString(36);
-};
-
-Color.detach = function(color){
-	color = new Color(color);
-	return [Color.rgb(color.red, color.green, color.blue).toString(), color.alpha];
 };
 
 })();
