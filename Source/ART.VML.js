@@ -25,6 +25,12 @@ ART.VML = ART.Class(ART.Element, ART.Container, {
 		this.children = [];
 		if (width != null && height != null) this.resize(width, height);
 	},
+
+	eject: function(){
+		var element = this.vml, parent = element.parentNode;
+		if (parent) parent.removeChild(element);
+		return this;
+	},
 	
 	inject: function(element){
 		if (element.element) element = element.element;
