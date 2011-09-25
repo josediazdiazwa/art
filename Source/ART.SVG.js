@@ -176,7 +176,7 @@ ART.SVG.Base = ART.Class(ART.SVG.Element, {
 		else
 			this.strokeBrush = brush;
 
-		var id = type + '-brush-e' + this.uid;
+		var id = type + '-brush-e' + ART.uniqueID();
 		brush.setAttribute('id', id);
 
 		this._injectBrush(type);
