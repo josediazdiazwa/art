@@ -3,7 +3,7 @@
 name: ART.VML
 description: "VML implementation for ART"
 authors: ["[Simo Kinnunen](http://twitter.com/sorccu)", "[Valerio Proietti](http://mad4milk.net)", "[Sebastian Markbåge](http://calyptus.eu/)"]
-provides: [ART.VML, ART.VML.Group, ART.VML.Shape, ART.VML.Text]
+provides: [ART.VML, ART.VML.Group, ART.VML.Shape, ART.VML.Text, ART.VML.Path]
 requires: [ART, ART.Color, ART.Element, ART.Container, ART.Transform, ART.Path]
 ...
 */
@@ -537,9 +537,9 @@ ART.VML.Shape = ART.Class(ART.VML.Base, {
 	
 	draw: function(path, width, height){
 		
-		if (!(path instanceof ART.Path)) path = new ART.Path(path);
-		this._vml = path.toVML(precision);
-		this._size = path.measure();
+		if (!(path instanceof ART.VML.Path)) path = new ART.VML.Path(path);
+		this._vml = path.toVML();
+		//this._size = path.measure();
 		
 		if (width != null) this.width = width;
 		if (height != null) this.height = height;
@@ -660,7 +660,7 @@ ART.VML.Text = ART.Class(ART.VML.Base, {
 		
 		if (path){
 			this.currentPath = path = new ART.Path(path);
-			this.element.path = path.toVML(precision);
+			this.element.path = path.toVML();
 		} else if (!this.currentPath){
 			var i = -1, offsetRows = '\n';
 			while ((i = text.indexOf('\n', i + 1)) > -1) offsetRows += '\n';
@@ -708,56 +708,72 @@ ART.VML.Text = ART.Class(ART.VML.Base, {
 		
 		this._transform();
 
-		this._size = { left: this.left, top: this.top, width: this.width, height: this.height};
+		//this._size = { left: this.left, top: this.top, width: this.width, height: this.height};
 		return this;
 	}
 
 });
 
-// VML Path Extensions
+// VML Path Class
 
-var path, p, round = Math.round;
+var round = Math.round;
 
-function moveTo(sx, sy, x, y){
-	path.push('m', round(x * p), round(y * p));
-};
+ART.VML.Path = ART.Class(ART.Path, {
 
-function lineTo(sx, sy, x, y){
-	path.push('l', round(x * p), round(y * p));
-};
+	initialize: function(path){
+		this.reset();
+		if (path instanceof ART.VML.Path){
+			this.path = [Array.prototype.join.call(path.path, ' ')];
+		} else if (path){
+			this.push(path);
+		}
+	},
 
-function curveTo(sx, sy, p1x, p1y, p2x, p2y, x, y){
-	path.push('c',
-		round(p1x * p), round(p1y * p),
-		round(p2x * p), round(p2y * p),
-		round(x * p), round(y * p)
-	);
-};
+	onReset: function(){
+		this.path = [];
+	},
 
-function arcTo(sx, sy, ex, ey, cx, cy, r, sa, ea, ccw){
-	cx *= p;
-	cy *= p;
-	r *= p;
-	path.push(ccw ? 'at' : 'wa',
-		round(cx - r), round(cy - r),
-		round(cx + r), round(cy + r),
-		round(sx * p), round(sy * p),
-		round(ex * p), round(ey * p)
-	);
-};
+	onMove: function(sx, sy, x, y){
+		this.path.push('m', round(x * precision), round(y * precision));
+	},
 
-function close(){
-	path.push('x');
-};
+	onLine: function(sx, sy, x, y){
+		this.path.push('l', round(x * precision), round(y * precision));
+	},
 
-ART.Path.prototype.toVML = function(precision){
-	if (this.cache.vml == null){
-		path = [];
-		p = precision;
-		this.visit(lineTo, curveTo, arcTo, moveTo, close);
-		this.cache.vml = path.join(' ');
+	onCurve: function(sx, sy, p1x, p1y, p2x, p2y, x, y){
+		this.path.push('c',
+			round(p1x * precision), round(p1y * precision),
+			round(p2x * precision), round(p2y * precision),
+			round(x * precision), round(y * precision)
+		);
+	},
+
+	_arcToBezier: ART.Path.prototype.onArc,
+
+	onArc: function(sx, sy, ex, ey, cx, cy, rx, ry, sa, ea, ccw, rotation){
+		if (rx != ry || rotation) return this._arcToBezier(sx, sy, ex, ey, cx, cy, rx, ry, sa, ea, ccw, rotation);
+		cx *= precision;
+		cy *= precision;
+		rx *= precision;
+		this.path.push(ccw ? 'at' : 'wa',
+			round(cx - rx), round(cy - rx),
+			round(cx + rx), round(cy + rx),
+			round(sx * precision), round(sy * precision),
+			round(ex * precision), round(ey * precision)
+		);
+	},
+
+	onClose: function(){
+		this.path.push('x');
+	},
+
+	toVML: function(){
+		return this.path.join(' ');
 	}
-	return this.cache.vml;
-};
+
+});
+
+ART.VML.Path.prototype.toString = ART.VML.Path.prototype.toVML;
 
 })();

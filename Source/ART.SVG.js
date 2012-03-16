@@ -2,7 +2,7 @@
 ---
 name: ART.SVG
 description: "SVG implementation for ART"
-provides: [ART.SVG, ART.SVG.Group, ART.SVG.Shape, ART.SVG.Image, ART.SVG.Text]
+provides: [ART.SVG, ART.SVG.Group, ART.SVG.Shape, ART.SVG.Image, ART.SVG.Text, ART.SVG.Path]
 requires: [ART, ART.Color, ART.Element, ART.Container, ART.Transform, ART.Path]
 ...
 */
@@ -405,23 +405,6 @@ ART.SVG.Image = ART.Class(ART.SVG.Base, {
 var fontAnchors = { left: 'start', center: 'middle', right: 'end' },
     fontAnchorOffsets = { middle: '50%', end: '100%' };
 
-/* split each continuous line into individual paths */
-
-var splitPaths, splitPath;
-
-function splitMove(sx, sy, x, y){
-	if (splitPath.length > 3) splitPaths.push(splitPath);
-	splitPath = ['M', x, y];
-};
-
-function splitLine(sx, sy, x, y){
-	splitPath.push('L', x, y);
-};
-
-function splitCurve(sx, sy, p1x, p1y, p2x, p2y, x, y){
-	splitPath.push('C', p1x, p1y, p2x, p2y, x, y);
-};
-
 ART.SVG.Text = ART.Class(ART.SVG.Base, {
 
 	base_initialize: ART.SVG.Base.prototype.initialize,
@@ -590,6 +573,97 @@ ART.SVG.Text = ART.Class(ART.SVG.Base, {
 		if (parent) parent.insertBefore(element, sibling);
 		return result;
 	}
+
+});
+
+/* Utility command factories */
+
+var point = function(c){
+	return function(x, y){
+		return this.push(c, x, y);
+	};
+};
+
+var arc = function(c, cc){
+	return function(x, y, rx, ry, outer){
+		return this.push(c, Math.abs(rx || x), Math.abs(ry || rx || y), 0, outer ? 1 : 0, cc, x, y);
+	};
+};
+
+var curve = function(t, s, q, c){
+	return function(c1x, c1y, c2x, c2y, ex, ey){
+		var l = arguments.length, k = l < 4 ? t : l < 6 ? q : c;
+		return this.push(k, c1x, c1y, c2x, c2y, ex, ey);
+	};
+};
+
+// SVG Path Class
+
+ART.SVG.Path = ART.Class({
+	
+	initialize: function(path){
+		if (path instanceof ART.SVG.Path){
+			this.path = [Array.prototype.join.call(path.path, ' ')];
+		} else {
+			this.path = [path || 'm0 0'];
+		}
+	},
+	
+	push: function(){
+		this.path.push(Array.prototype.join.call(arguments, ' '));
+		return this;
+	},
+	
+	reset: function(){
+		this.path = [];
+		return this;
+	},
+	
+	move: point('m'),
+	moveTo: point('M'),
+	
+	line: point('l'),
+	lineTo: point('L'),
+	
+	curve: curve('t', 's', 'q', 'c'),
+	curveTo: curve('T', 'S', 'Q', 'C'),
+	
+	arc: arc('a', 1),
+	arcTo: arc('A', 1),
+	
+	counterArc: arc('a', 0),
+	counterArcTo: arc('A', 0),
+	
+	close: function(){
+		return this.push('z');
+	},
+	
+	toSVG: function(){
+		return this.path.join(' ');
+	}
+
+});
+
+ART.SVG.Path.prototype.toString = ART.SVG.Path.prototype.toSVG;
+
+/* split each continuous line into individual paths */
+
+var PathPerRow = new ART.Class(ART.Path, {
+var pathSplitter = new ART.Path();
+pathSplitter.splitPaths = [];
+
+function splitMove(sx, sy, x, y){
+	if (splitPath.length > 3) splitPaths.push(splitPath);
+	splitPath = ['M', x, y];
+};
+
+function splitLine(sx, sy, x, y){
+	splitPath.push('L', x, y);
+};
+
+function splitCurve(sx, sy, p1x, p1y, p2x, p2y, x, y){
+	splitPath.push('C', p1x, p1y, p2x, p2y, x, y);
+};
 
 });
 

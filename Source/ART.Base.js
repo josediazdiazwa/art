@@ -25,6 +25,7 @@ var VML = function(){
 var MODE = SVG() ? ART.SVG : VML() ? ART.VML : null;
 if (!MODE) return;
 
+ART.Path = MODE.Path;
 ART.Shape = MODE.Shape;
 ART.Group = MODE.Group;
 ART.Text = MODE.Text;
