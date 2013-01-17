@@ -15,18 +15,16 @@ var ART = function(){
 ART.version = '09.dev';
 ART.build = 'DEV';
 
-ART.Class = function(base){
-	var constructor = function(){};
-	constructor.prototype = typeof base == 'function' ? base.prototype : base;
-	var proto = new constructor();
-	for (var i = 1, l = arguments.length; i < l; i++){
+ART.Class = function(mixins){
+	var proto = {};
+	for (var i = 0, l = arguments.length; i < l; i++){
 		var mixin = arguments[i];
 		if (typeof mixin == 'function') mixin = mixin.prototype;
 		for (var key in mixin) proto[key] = mixin[key];
 	}
-	if (proto.initialize) constructor = proto.initialize;
-	constructor.prototype = proto;
-	return constructor;
+	proto.constructor = proto.initialize || function(){};
+	proto.constructor.prototype = proto;
+	return proto.constructor;
 };
 
 ART.Element = ART.Class({
@@ -103,7 +101,7 @@ var transformTo = function(xx, yx, xy, yy, x, y){
 
 ART.Transform = ART.Class({
 
-	initialize: transformTo,
+	constructor: transformTo,
 
 	_transform: function(){},
 
