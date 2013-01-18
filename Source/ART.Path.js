@@ -19,7 +19,8 @@ ART.Path = ART.Class({
 	/* parser */
 	
 	push: function(){
-		var p = Array.prototype.join.call(arguments, ' ').match(/[a-df-z]|[\-+]?(?:[\d\.]e[\-+]?|[^\s\-+,a-z])+/ig);
+		var p = Array.prototype.join.call(arguments, ' ')
+			.match(/[a-df-z]|[\-+]?(?:[\d\.]e[\-+]?|[^\s\-+,a-z])+/ig);
 		if (!p) return this;
 
 		var last, cmd = p[0], i = 1;
@@ -31,7 +32,7 @@ ART.Path = ART.Class({
 				case 's': this.curve(p[i++], p[i++], null, null, p[i++], p[i++]); break;
 				case 'q': this.curve(p[i++], p[i++], p[i++], p[i++]); break;
 				case 't': this.curve(p[i++], p[i++]); break;
-				case 'a': this.arc(p[i+5], p[i+6], p[i], p[i+1], p[i+3], p[i+4], p[i+2]); p += 7; break;
+				case 'a': this.arc(p[i+5], p[i+6], p[i], p[i+1], p[i+3], !+p[i+4], p[i+2]); i += 7; break;
 				case 'h': this.line(p[i++], 0); break;
 				case 'v': this.line(0, p[i++]); break;
 
@@ -41,13 +42,14 @@ ART.Path = ART.Class({
 				case 'S': this.curveTo(p[i++], p[i++], null, null, p[i++], p[i++]); break;
 				case 'Q': this.curveTo(p[i++], p[i++], p[i++], p[i++]); break;
 				case 'T': this.curveTo(p[i++], p[i++]); break;
-				case 'A': this.arcTo(p[i+5], p[i+6], p[i], p[i+1], p[i+3], p[i+4], p[i+2]); p += 7; break;
+				case 'A': this.arcTo(p[i+5], p[i+6], p[i], p[i+1], p[i+3], !+p[i+4], p[i+2]); i += 7; break;
 				case 'H': this.lineTo(p[i++], this.penY); break;
 				case 'V': this.lineTo(this.penX, p[i++]); break;
 				
 				case 'Z': case 'z': this.close(); break;
-				default: cmd = last; continue;
+				default: cmd = last; i--; continue;
 			}
+
 			last = cmd;
 			if (last == 'm') last = 'l';
 			else if (last == 'M') last = 'L';
@@ -61,51 +63,52 @@ ART.Path = ART.Class({
 	reset: function(){
 		this.penX = this.penY = 0;
 		this.penDownX = this.penDownY = null;
+		this._pivotX = this._pivotY = 0;
 		this.onReset();
 		return this;
 	},
 	
 	move: function(x,y){
-		this.onMove(this.penX, this.penY, this.penX += x, this.penY += y);
+		this.onMove(this.penX, this.penY, this._pivotX = this.penX += (+x), this._pivotY = this.penY += (+y));
 		return this;
 	},
 	moveTo: function(x,y){
-		this.onMove(this.penX, this.penY, this.penX = +x, this.penY = +y);
+		this.onMove(this.penX, this.penY, this._pivotX = this.penX = (+x), this._pivotY = this.penY = (+y));
 		return this;
 	},
 
 	line: function(x,y){
-		return this.lineTo(this.penX + x, this.penY + y);
+		return this.lineTo(this.penX + (+x), this.penY + (+y));
 	},
 	lineTo: function(x,y){
 		if (this.penDownX == null){ this.penDownX = this.penX; this.penDownY = this.penY; }
-		this.onLine(this.penX, this.penY, this.penX = +x, this.penY = +y);
+		this.onLine(this.penX, this.penY, this._pivotX = this.penX = (+x), this._pivotY = this.penY = (+y));
 		return this;
 	},
 	
 	curve: function(c1x, c1y, c2x, c2y, ex, ey){
 		var x = this.penX, y = this.penY;
 		return this.curveTo(
-			x + c1x, y + c1y,
-			c2x == null ? null : x + c2x,
-			c2y == null ? null : y + c2y,
-			ex == null ? null : x + ex,
-			ey == null ? null : y + ey
+			x + (+c1x), y + (+c1y),
+			c2x == null ? null : x + (+c2x),
+			c2y == null ? null : y + (+c2y),
+			ex == null ? null : x + (+ex),
+			ey == null ? null : y + (+ey)
 		);
 	},
 	curveTo: function(c1x, c1y, c2x, c2y, ex, ey){
 		var x = this.penX, y = this.penY;
 		if (c2x == null){
-			c2x = c1x; c2y = c1y;
+			c2x = +c1x; c2y = +c1y;
 			c1x = (x * 2) - (this._pivotX || 0); c1y = (y * 2) - (this._pivotY || 0);
 		}
 		if (ex == null){
 			this._pivotX = +c1x; this._pivotY = +c1y;
 			ex = +c2x; ey = +c2y;
-			c2x = (ex + c1x * 2) / 3; c2y = (ey + c1y * 2) / 3;
-			c1x = (x + c1x * 2) / 3; c1y = (y + c1y * 2) / 3;
+			c2x = (ex + (+c1x) * 2) / 3; c2y = (ey + (+c1y) * 2) / 3;
+			c1x = (x + (+c1x) * 2) / 3; c1y = (y + (+c1y) * 2) / 3;
 		} else {
-			this._pivotX = c2x; this._pivotY = c2y;
+			this._pivotX = +c2x; this._pivotY = +c2y;
 		}
 		if (this.penDownX == null){ this.penDownX = x; this.penDownY = y; }
 		this.onBezierCurve(x, y, +c1x, +c1y, +c2x, +c2y, this.penX = +ex, this.penY = +ey);
@@ -113,11 +116,11 @@ ART.Path = ART.Class({
 	},
 	
 	arc: function(x, y, rx, ry, outer, counterClockwise, rotation){
-		return this.arcTo(this.penX + x, this.penY + y, rx, ry, outer, counterClockwise, rotation);
+		return this.arcTo(this.penX + (+x), this.penY + (+y), rx, ry, outer, counterClockwise, rotation);
 	},
 	arcTo: function(x, y, rx, ry, outer, counterClockwise, rotation){
-		rx = Math.abs(rx || (x - this.penX));
-		ry = Math.abs(ry || rx || (y - this.penY));
+		ry = Math.abs(+ry || +rx || (+y - this.penY));
+		rx = Math.abs(+rx || (+x - this.penX));
 
 		if (!rx || !ry || (x == this.penX && y == this.penY)) return this.lineTo(x, y);
 
@@ -161,7 +164,7 @@ ART.Path = ART.Class({
 		// Circular Arc
 		if (this.penDownX == null){ this.penDownX = this.penX; this.penDownY = this.penY; }
 		this.onArc(
-			tX, tY, this.penX = x, this.penY = y,
+			tX, tY, this._pivotX = this.penX = x, this._pivotY = this.penY = y,
 			cx, cy, rx, ry, sa, ea, !clockwise, rotation
 		);
 		return this;
@@ -228,6 +231,11 @@ ART.Path = ART.Class({
 		if (v1 < 0.01 && v2 < 0.01){
 			this.onLine(sx, sy, ex, ey);
 			return;
+		}
+
+		// Avoid infinite recursion
+		if (isNaN(v1) || isNaN(v2)){
+			throw new Error('Bad input');
 		}
 
 		// Split curve
