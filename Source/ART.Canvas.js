@@ -446,14 +446,14 @@ ART.Canvas.Path = ART.Class(ART.Path, {
 		});
 	},
 
-	/*_arcToBezier: ART.Path.prototype.onArc,
+	_arcToBezier: ART.Path.prototype.onArc,
 
 	onArc: function(sx, sy, ex, ey, cx, cy, rx, ry, sa, ea, ccw, rotation){
 		if (rx != ry || rotation) return this._arcToBezier(sx, sy, ex, ey, cx, cy, rx, ry, sa, ea, ccw, rotation);
 		this.path.push(function(context){
 			context.arc(cx, cy, rx, sa, ea, ccw);
 		});
-	},*/
+	},
 
 	onClose: function(){
 		this.path.push(function(context){
