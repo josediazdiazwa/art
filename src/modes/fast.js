@@ -1,0 +1,31 @@
+var DOM = require('./dom');
+var Canvas = require('./canvas');
+//var Flash = require('./flash/index');
+
+var hasCanvas = function(){
+
+	var canvas = document.createElement('canvas');
+	return canvas && !!canvas.getContext;
+
+};
+
+/*
+var hasFlash = function(){
+
+	var flash = navigator.plugins && navigator.plugins['Shockwave Flash'];
+	try { flash = flash ? flash.description : new ActiveXObject('ShockwaveFlash.ShockwaveFlash').GetVariable('$version'); } 
+	catch (x){ }
+	return flash && flash.match(/\d+/) >= 9;
+
+};
+*/
+
+var MODE = hasCanvas() ? Canvas : /*hasFlash() ? ART.Flash :*/ DOM;
+
+exports.Surface = MODE.Surface;
+exports.Path = MODE.Path;
+exports.Shape = MODE.Shape;
+exports.Group = MODE.Group;
+exports.Text = MODE.Text;
+
+require('./current').setCurrent(exports);

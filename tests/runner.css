@@ -1,0 +1,103 @@
+body {
+	font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+	font-size: 80%;
+}
+
+html, body, img, h1, iframe, canvas, svg, vml {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	display: block;
+}
+
+.container {
+	padding:3em;
+	width: auto;
+}
+
+ul#prebuilt {
+	padding-left:0;
+	list-style:none;
+}
+ul#prebuilt li a {
+	font-size: 1.5em;
+	text-decoration: none;
+	padding: 0.5em;
+}
+ul#prebuilt li a:hover {
+	background-color: #eee;
+}
+
+ul#prebuilt li .sets {
+	font-size:0.5em;
+	max-width: 30em;
+	display: inline-block;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.test-results {
+	display: block;
+}
+
+	.test-results .pending, .test-results .loading, .test-results .failed {
+		display: block;
+		margin: 5px;
+		padding: 5px;
+		background: #EEE;
+	}
+
+		.test-results .failed {
+			background: #FCC;
+		}
+	
+		.test-results .header {
+			display: block;
+			color: #FFF;
+			padding: 5px;
+			text-decoration: none;
+		}
+
+			.test-results .loading .header {
+				background: #EEE;
+				color: #999;
+			}
+			.test-results .pending .header {
+				background: #000;
+			}
+			.test-results .failed .header {
+				background: #C33;
+			}
+
+		.test-results .test, .test-results .key {
+			display: inline-block;
+			vertical-align: top;
+			border: 10px solid #CCC;
+			background: #FFF;
+			margin: 1px;
+		}
+		
+		.test-results .test {
+			margin-left: 0;
+		}
+
+		.test-results .error {
+			margin: 1px;
+		}
+		
+		.test-results .test span, .test-results .key span {
+			display: block;
+			background: #CCC;
+			color: #000;
+		}
+
+		.test-results .secondaryKey {
+			display: none;
+		}
+		.test-results .key:hover .primaryKey {
+			display: none;
+		}
+		.test-results .key:hover .secondaryKey {
+			display: block;
+		}
