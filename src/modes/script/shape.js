@@ -1,5 +1,4 @@
 var Class = require('../../core/class');
-var AST = require('../../../lib/ast-js/ast');
 var Base = require('./base');
 var Path = require('./path');
 
