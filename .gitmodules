@@ -7,3 +7,6 @@
 [submodule "lib/slick"]
 	path = lib/slick
 	url = git@github.com:mootools/slick.git
+[submodule "lib/ast-js"]
+	path = lib/ast-js
+	url = git@github.com:sebmarkbage/ast-js.git

@@ -120,7 +120,17 @@ SVGParser.implement({
 		var fontstyle = fontStyles(styles);
 		
 		var create = function(font){
-			var Text = font ? Font : this.MODE.Text;
+			if (font){
+				var face = font.face;
+				fontstyle = {
+					fontFamily: font.face['font-family'],
+					fontSize: fontstyle['font-size']
+				};
+				if (face['font-weight'] > 500) fontstyle.fontWeight = face['font-weight'];
+				if (face['font-stretch'] == 'oblique' || face['font-style'] == 'oblique' || face['font-style'] == 'italic') fontstyle.fontStyle = 'italic';
+			};
+
+			var Text = font ? (this.MODE.Font || Font) : this.MODE.Text;
 
 			if (row){
 				var pad = row.pad || '';
