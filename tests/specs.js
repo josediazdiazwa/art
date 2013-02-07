@@ -1181,8 +1181,6 @@ exports.sets = {
 exports.unsupportedFeatures = [
 	// Temporarily disable specs requires unsupported features
 	'Clipping',
-	'Lion',
-	'Tiger',
 	'color-prof-01-f',
 	'filters-conv-01-f',
 	'extend-namespace-01-f',
