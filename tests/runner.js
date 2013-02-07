@@ -7,6 +7,8 @@ var Specs = require('./specs');
 var ComparisonTests = require('./ui/ComparisonTests');
 var SetSelector = require('./ui/SetSelector');
 
+var Comparer = require('./comparer');
+
 var selectedSet = document.location.search.substr(1);
 
 if (!selectedSet){
@@ -30,6 +32,7 @@ if (!selectedSet){
 					if (result == null){
 						failed('Parser Failed: Returned null');
 					} else {
+						var wrapper;
 						var link = document.createElement('a');
 						link.setAttribute('href', svgPath);
 						link.title = 'Click to view SVG';
@@ -44,12 +47,28 @@ if (!selectedSet){
 
 							link.className = 'primaryKey';
 
-							var wrapper = document.createElement('div');
+							wrapper = document.createElement('div');
 							wrapper.appendChild(link);
 							wrapper.appendChild(svgImg);
+
 							link = wrapper;
 						}
-						completed(result.toElement(), link);
+
+						var resultElement = result.toElement();
+
+						var comparison = Comparer.compare && Comparer.compare(img, result);
+
+						if (comparison && comparison.element){
+							resultElement.setAttribute('class', 'primaryResult');
+							comparison.element.setAttribute('class', 'secondaryResult');
+
+							wrapper = document.createElement('div');
+							wrapper.appendChild(resultElement);
+							wrapper.appendChild(comparison.element);
+							resultElement = wrapper;
+						}
+
+						completed(resultElement, link, comparison ? comparison.score : null);
 					}
 				});
 			};
@@ -57,12 +76,20 @@ if (!selectedSet){
 		};
 	};
 
+	var disabledSpecs = {};
+	for (var i = 0, l = Specs.unsupportedFeatures.length; i < l; i++){
+		disabledSpecs[Specs.unsupportedFeatures[i]] = true;
+	}
+
 	var sets = Specs.presets[selectedSet];
 
 	function addSet(set){
 		var set = Specs.sets[set];
 
 		function addSpec(file){
+			if (file in disabledSpecs){
+				return;
+			}
 			tester.add(createTestRunner(set.testPath + file + '.svg', set.keyPath + file + '.png'), file);
 		}
 
@@ -70,8 +97,26 @@ if (!selectedSet){
 			addSpec(set.files[i]);
 	}
 
-	for (var i = 0, l = sets.length; i < l; i++)
-		addSet(sets[i]);
+	var ranTests = {};
+
+	if (sets){
+		for (var i = 0, l = sets.length; i < l; i++)
+			addSet(sets[i]);
+	} else {
+		for (var setName in Specs.sets){
+			var set = Specs.sets[setName];
+			for (var i = 0, l = set.files.length; i < l; i++){
+				var file = set.files[i];
+				if (file in disabledSpecs){
+					continue;
+				}
+				if ((file == selectedSet || selectedSet == 'all') && !(file in ranTests)){
+					ranTests[file] = true;
+					tester.add(createTestRunner(set.testPath + file + '.svg', set.keyPath + file + '.png'), file);
+				}
+			}
+		}
+	}
 
 	document.body.appendChild(tester.element);
 

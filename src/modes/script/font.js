@@ -50,7 +50,6 @@ var Font = Class(Base, {
 });
 
 Font.register = function(font){
-	console.log('registered', font);
 	var face = font.face,
 	    family = face['font-family'],
 	    weight = (face['font-weight'] > 500 ? 'bold' : 'normal'),

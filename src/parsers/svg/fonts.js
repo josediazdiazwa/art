@@ -26,7 +26,7 @@ SVGParser.implement({
 			this.fontDocument = element;
 			this.findFonts(element);
 		}
-		return parse.call(this, element, styles);
+		return parse.apply(this, arguments);
 	},
 	
 	findFonts: function(document){
@@ -144,14 +144,10 @@ SVGParser.implement({
 		if (face.ascent == null) face.ascent = face.descent == null ? 0.8 * units : units - face.descent;
 		if (face.descent == null) face.descent = face.ascent - units;
 		
-		console.log('DEFINE FONT', face['font-family'], face);
-
 		var family = face['font-family'];
 		if (!family) return;
 		face['font-family'] = family = family.replace(trimFontFamily, '');
 
-		console.log('register', family);
-		
 		var fonts = this.fonts || (this.fonts = {});
 		if (face.ascent) face.ascent = +face.ascent;
 		if (face.descent) face.descent = +face.descent;

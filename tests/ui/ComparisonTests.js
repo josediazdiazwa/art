@@ -5,16 +5,35 @@ var ComparisonTests = function(){
 };
 
 ComparisonTests.prototype.add = function(test, name){
-	this.tests.push({ name: name, test: test });
+
+	var block = document.createElement('div'),
+		header = document.createElement('a');
+	setText(header, name);
+		
+	block.setAttribute('class', 'pending');
+
+	header.setAttribute('class', 'header');
+	header.setAttribute('href', '?' + name);
+	block.appendChild(header);
+
+	this.element.appendChild(block);
+
+	this.tests.push({ name: name, test: test, header: header, block: block });
 };
 
 ComparisonTests.prototype.run = function(){
 	var tests = this.tests;
 	var i = -1, l = tests.length, self = this;
+	var blank = function(){};
 	var next = function(){
 		i++;
 		if (i >= l) return;
-		self.runItem(tests[i].test, tests[i].name, next);
+		if (i % 4 == 3){
+			self.runItem(tests[i], next);
+		} else {
+			self.runItem(tests[i], blank);
+			next();
+		}
 	};
 	next();
 };
@@ -26,22 +45,19 @@ function setText(element, text){
 		element.textContent = text;
 };
 
-ComparisonTests.prototype.runItem = function(testFn, name, tail){
-	var block = document.createElement('div'),
-		header = document.createElement('a');
-	setText(header, name);
-		
-	header.setAttribute('class', 'header');
-	header.setAttribute('href', '?' + name);
-	block.appendChild(header);
-
-	this.element.appendChild(block);
+ComparisonTests.prototype.runItem = function(test, tail){
 	
+	var testFn = test.test, name = test.name, header = test.header, block = test.block;
+
 	block.setAttribute('class', 'loading');
 	
-	testFn(function(testResult, keyResult){
+	testFn(function(testResult, keyResult, score){
 
-		block.setAttribute('class', 'pending');
+		if (score != null){
+			header.textContent += ' [ ' + (Math.round((score) * 10000) / 100) + '% ]';
+		}
+
+		block.setAttribute('class', score == null ? 'pending' : score > 0.95 ? 'passed' : 'failed');
 	
 		var test = document.createElement('div');
 		test.setAttribute('class', 'test');
@@ -66,8 +82,8 @@ ComparisonTests.prototype.runItem = function(testFn, name, tail){
 		block.appendChild(key);
 
 		block.appendChild(test);
-		
-		setTimeout(tail, 0);
+
+		tail();
 		
 	}, function(x){
 

@@ -41,7 +41,7 @@ ul#prebuilt li .sets {
 	display: block;
 }
 
-	.test-results .pending, .test-results .loading, .test-results .failed {
+	.test-results .pending, .test-results .loading, .test-results .failed, .test-results .passed {
 		display: block;
 		margin: 5px;
 		padding: 5px;
@@ -54,20 +54,23 @@ ul#prebuilt li .sets {
 	
 		.test-results .header {
 			display: block;
-			color: #FFF;
+			background: #EEE;
+			color: #999;
 			padding: 5px;
 			text-decoration: none;
 		}
 
 			.test-results .loading .header {
 				background: #EEE;
-				color: #999;
+				color: #000;
 			}
-			.test-results .pending .header {
-				background: #000;
+			.test-results .passed .header {
+				background: #3C3;
+				color: #FFF;
 			}
 			.test-results .failed .header {
 				background: #C33;
+				color: #FFF;
 			}
 
 		.test-results .test, .test-results .key {
@@ -99,5 +102,15 @@ ul#prebuilt li .sets {
 			display: none;
 		}
 		.test-results .key:hover .secondaryKey {
+			display: block;
+		}
+
+		.test-results .test .secondaryResult {
+			display: none;
+		}
+		.test-results .test:hover .primaryResult {
+			display: none;
+		}
+		.test-results .test:hover .secondaryResult {
 			display: block;
 		}

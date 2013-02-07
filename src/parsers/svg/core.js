@@ -41,7 +41,12 @@ var SVGParser = Class({
 		this.MODE = mode;
 	},
 
-	parse: function(element, styles){
+	// TODO Fix this silly API
+	parseAsSurface: function(element, styles){
+		return this.parse(element, styles, true);
+	},
+
+	parse: function(element, styles, asSurface){
 		if (typeof element == 'string') element = this.parseXML(element);
 
 		if (!styles)
@@ -50,9 +55,9 @@ var SVGParser = Class({
 			for (var style in defaultStyles)
 				if (!(style in styles))
 					styles[style] = defaultStyles[style];
-		
-		if (element.documentElement){
-			element = element.documentElement;
+
+		if (element.documentElement || asSurface){
+			element = element.documentElement || element;
 			var canvas = new this.MODE.Surface(
 				this.parseLength(element.getAttribute('width') || '100%', styles, 'x'),
 				this.parseLength(element.getAttribute('height') || '100%', styles, 'y')
