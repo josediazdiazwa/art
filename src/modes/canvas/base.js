@@ -6,9 +6,28 @@ var Node = require('./node');
 var genericContext = document.createElement('canvas');
 genericContext = genericContext.getContext && genericContext.getContext('2d');
 
+function recolorImage(img, color1, color2){
+	// TODO: Fix this experimental implementation
+	color1 = Color.detach(color1);
+	color2 = Color.detach(color2);
+	var canvas = document.createElement('canvas'),
+		context = canvas.getContext('2d');
+	canvas.width = img.width;
+	canvas.height = img.height;
+	context.fillStyle = color2[0];
+	context.fillRect(0, 0, img.width, img.height);
+	context.globalCompositeOperation = 'lighter';
+	context.drawImage(img, 0, 0);
+	return canvas;
+}
+
 var Base = Class(Node, {
 
 	initialize: function(){
+		this._fill = null;
+		this._pendingFill = null;
+		this._fillTransform = null;
+		this._stroke = null;
 	},
 	
 	/* styles */
@@ -26,7 +45,8 @@ var Base = Class(Node, {
 	
 	fill: function(color){
 		if (arguments.length > 1) return this.fillLinear(arguments);
-		else this._fill = color ? new Color(color).toString() : null;
+		if (this._pendingFill) this._pendingFill();
+		this._fill = color ? new Color(color).toString() : null;
 		return this.invalidate();
 	},
 
@@ -40,9 +60,11 @@ var Base = Class(Node, {
 
 		centerX += centerX - focusX;
 		centerY += centerY - focusY;
-		
+
 		if (radiusX == 0) return this.fillLinear(stops);
 		var ys = radiusY / radiusX;
+
+		if (this._pendingFill) this._pendingFill();
 
 		var gradient = genericContext.createRadialGradient(focusX, focusY / ys, 0, centerX, centerY / ys, radiusX * 2);
 
@@ -62,6 +84,7 @@ var Base = Class(Node, {
 
 	fillLinear: function(stops, x1, y1, x2, y2){
 		if (arguments.length < 5) return this;
+		if (this._pendingFill) this._pendingFill();
 		var gradient = genericContext.createLinearGradient(x1, y1, x2, y2);
 		this._addColors(gradient, stops);
 		this._fill = gradient;
@@ -70,6 +93,38 @@ var Base = Class(Node, {
 	},
 
 	fillImage: function(url, width, height, left, top, color1, color2){
+		if (this._pendingFill) this._pendingFill();
+		var img = url;
+		if (!(img instanceof Image)){
+			img = new Image();
+			img.src = url;
+		}
+		if (img.width && img.height){
+			return this._fillImage(img, width, height, left || 0, top || 0, color1, color2);
+		}
+
+		// Not yet loaded
+		this._fill = null;
+		var self = this,
+			callback = function(){
+				cancel();
+				self._fillImage(img, width, height, left || 0, top || 0, color1, color2);
+			},
+			cancel = function(){
+				img.removeEventListener('load', callback, false);
+				self._pendingFill = null;
+			};
+		this._pendingFill = cancel;
+		img.addEventListener('load', callback, false);
+		return this;
+	},
+
+	_fillImage: function(img, width, height, left, top, color1, color2){
+		var w = width ? width / img.width : 1,
+			h = height ? height / img.height : 1;
+		if (color1 != null) img = recolorImage(img, color1, color2);
+		this._fill = genericContext.createPattern(img, 'repeat');
+		this._fillTransform = new Transform(w, 0, 0, h);
 		return this.invalidate();
 	},
 
