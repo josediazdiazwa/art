@@ -1,25 +1,45 @@
-var MODE = require('../src/modes/fast');
+var query = document.location.search.substr(1).split('&'),
+	options = {
+		set: '',
+		mode: 'fast',
+		compare: false
+	};
+
+for (var i = 0, l = query.length; i < l; i++){
+	var q = query[i].split('=', 2);
+	options[q[0]] = q[1];
+}
+
+var MODE;
+switch (options.mode){
+	case 'vml': MODE = require('../src/modes/vml'); break;
+	case 'svg': MODE = require('../src/modes/svg'); break;
+	case 'canvas': MODE = require('../src/modes/canvas'); break;
+	case 'dom': MODE = require('../src/modes/dom'); break;
+	default: MODE = require('../src/modes/fast');
+}
+require('../src/modes/current').setCurrent(MODE);
 
 var SVGParser = require('../src/parsers/svg');
-
-var Specs = require('./specs');
 
 var ComparisonTests = require('./ui/ComparisonTests');
 var SetSelector = require('./ui/SetSelector');
 
-var Comparer = require('./comparer');
+var Specs = require('./specs');
 
-var selectedSet = document.location.search.substr(1);
-
-if (!selectedSet){
+if (!options.set){
 
 	var selector = SetSelector(Specs);
 	document.body.appendChild(selector);
 
 } else {
 
+	var Comparer = require('./comparer');
+
 	var implementation = document.implementation;
 	var hasSVG = (implementation && implementation.hasFeature && implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
+
+	var selectedSet = options.set;
 
 	var tester = new ComparisonTests();
 
@@ -56,7 +76,7 @@ if (!selectedSet){
 
 						var resultElement = result.toElement();
 
-						var comparison = Comparer.compare && Comparer.compare(img, result);
+						var comparison = options.compare && Comparer.compare && Comparer.compare(img, result);
 
 						if (comparison && comparison.element){
 							resultElement.setAttribute('class', 'primaryResult');

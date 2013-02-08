@@ -13,7 +13,7 @@ ComparisonTests.prototype.add = function(test, name){
 	block.setAttribute('class', 'pending');
 
 	header.setAttribute('class', 'header');
-	header.setAttribute('href', '?' + name);
+	header.setAttribute('href', '?set=' + name);
 	block.appendChild(header);
 
 	this.element.appendChild(block);

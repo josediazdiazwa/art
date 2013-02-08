@@ -24,7 +24,7 @@ module.exports = function(specs){
 		var li = document.createElement('li');
 		var a = document.createElement('a');
 		setText(a, name);
-		a.href = '?' + name;
+		a.href = '?set=' + name;
 		li.appendChild(a);
 		ul.appendChild(li);
 	}
