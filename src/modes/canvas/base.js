@@ -83,12 +83,27 @@ var Base = Class(Node, {
 	},
 
 	fillLinear: function(stops, x1, y1, x2, y2){
-		if (arguments.length < 5) return this;
+		if (arguments.length < 5){
+			var angle = ((x1 == null) ? 270 : x1) * Math.PI / 180;
+
+			var x = Math.cos(angle), y = -Math.sin(angle),
+				l = (Math.abs(x) + Math.abs(y)) / 2,
+				w = this.width || 1, h = this.height || 1;
+
+			x *= l; y *= l;
+
+			x1 = 0.5 - x;
+			x2 = 0.5 + x;
+			y1 = 0.5 - y;
+			y2 = 0.5 + y;
+			this._fillTransform = new Transform(w, 0, 0, h);
+		} else {
+			this._fillTransform = null;
+		}
 		if (this._pendingFill) this._pendingFill();
 		var gradient = genericContext.createLinearGradient(x1, y1, x2, y2);
 		this._addColors(gradient, stops);
 		this._fill = gradient;
-		this._fillTransform = null;
 		return this.invalidate();
 	},
 
