@@ -49,7 +49,7 @@ module.exports = Class(Base, {
 		return this.invalidate();
 	},
 
-	renderTo: function(context){
+	renderShapeTo: function(context){
 		if (this._invisible || !this._text || (!this._fill && !this._stroke)) return null;
 		context.transform(this.xx, this.yx, this.xy, this.yy, this.x, this.y);
 		var fill = this._fill, stroke = this._stroke, text = this._text;

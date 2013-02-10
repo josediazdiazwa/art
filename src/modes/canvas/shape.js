@@ -22,7 +22,7 @@ module.exports = Class(Base, {
 		return this.invalidate();
 	},
 	
-	renderTo: function(context){
+	renderShapeTo: function(context){
 		if (this._invisible || !this._commands || (!this._fill && !this._stroke)) return null;
 		context.transform(this.xx, this.yx, this.xy, this.yy, this.x, this.y);
 		var commands = this._commands,
@@ -34,12 +34,17 @@ module.exports = Class(Base, {
 			commands[i](context);
 
 		if (fill){
-			context.save();
 			var m = this._fillTransform;
-			if (m) context.transform(m.xx, m.yx, m.xy, m.yy, m.x, m.y);
-			context.fillStyle = fill;
-			context.fill();
-			context.restore();
+			if (m){
+				context.save(); // TODO: Optimize away this by restoring the transform before stroking
+				context.transform(m.xx, m.yx, m.xy, m.yy, m.x, m.y);
+				context.fillStyle = fill;
+				context.fill();
+				context.restore();
+			} else {
+				context.fillStyle = fill;
+				context.fill();
+			}
 		}
 		if (stroke){
 			context.strokeStyle = stroke;
@@ -48,6 +53,7 @@ module.exports = Class(Base, {
 			context.lineJoin = this._strokeJoin;
 			context.stroke();
 		}
+
 		return /*hitContext == context && context.isPointInPath(hitX, hitY) ? this :*/ null;
 	}
 

@@ -16,9 +16,9 @@ var fps = 1000 / 60, invalids = [], renderTimer, renderInvalids = function(){
 	}
 };
 
-module.exports = Class(Element, Container, {
+var CanvasSurface = Class(Element, Container, {
 
-	initialize: function CanvasSurface(width, height){
+	initialize: function(width, height){
 		var element = this.element = document.createElement('canvas');
 		var context = this.context = element.getContext('2d');
 		this.children = [];
@@ -60,17 +60,18 @@ module.exports = Class(Element, Container, {
 			}
 		}
 	},
-	
+
 	render: function(){
 		var children = this.children, context = this.context, hitTarget;
+		context.setTransform(1, 0, 0, 1, 0, 0);
 		context.clearRect(0, 0, this.width, this.height);
 		for (var i = 0, l = children.length; i < l; i++){
-			context.save();
-			var hit = children[i].renderTo(context);
+			var hit = children[i].renderTo(context, 1, 0, 0, 1, 0, 0);
 			if (hit) hitTarget = hit;
-			context.restore();
 		}
 		if (hitContext == context) currentHitTarget = hitTarget;
 	}
 
 });
+
+module.exports = CanvasSurface;

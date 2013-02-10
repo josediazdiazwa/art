@@ -91,7 +91,6 @@ module.exports = Class(Node, {
 
 		gradient.setAttribute('spreadMethod', 'reflect'); // Closer to the VML gradient
 
-
 		this.element.removeAttribute('fill-opacity');
 		return gradient;
 	},

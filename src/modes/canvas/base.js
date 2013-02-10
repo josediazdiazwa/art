@@ -3,8 +3,8 @@ var Color = require('../../core/color');
 var Transform = require('../../core/Transform');
 var Node = require('./node');
 
-var genericContext = document.createElement('canvas');
-genericContext = genericContext.getContext && genericContext.getContext('2d');
+var genericCanvas = document.createElement('canvas'),
+	genericContext = genericCanvas.getContext && genericCanvas.getContext('2d');
 
 function recolorImage(img, color1, color2){
 	// TODO: Fix this experimental implementation
@@ -134,6 +134,29 @@ var Base = Class(Node, {
 		this._strokeCap = (cap != null) ? cap : 'round';
 		this._strokeJoin = (join != null) ? join : 'round';
 		return this.invalidate();
+	},
+
+	// Rendering
+
+	element_renderTo: Node.prototype.renderTo,
+
+	renderTo: function(context, xx, yx, xy, yy, x, y){
+		var opacity = this._opacity;
+		if (opacity == null || opacity >= 1){
+			return this.renderLayerTo(context, xx, yx, xy, yy, x, y);
+		}
+		if (this._fill && this._stroke){
+			return this.element_renderTo(context, xx, yx, xy, yy, x, y);
+		}
+		context.globalAlpha = opacity;
+		var r = this.renderLayerTo(context, xx, yx, xy, yy, x, y);
+		context.globalAlpha = 1;
+		return r;
+	},
+
+	renderLayerTo: function(context, xx, yx, xy, yy, x, y){
+		context.setTransform(xx, yx, xy, yy, x, y);
+		this.renderShapeTo(context);
 	}
 
 });
