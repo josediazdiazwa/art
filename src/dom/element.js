@@ -2,7 +2,7 @@ var Class = require('../core/class');
 
 module.exports = Class({
 
-	/* dom */
+	// dom
 
 	inject: function(element){
 		if (element.element) element = element.element;
@@ -16,7 +16,7 @@ module.exports = Class({
 		return this;
 	},
 
-	/* events */
+	// events
 
 	subscribe: function(type, fn, bind){
 		if (typeof type != 'string'){ // listen type / fn with object
@@ -28,7 +28,7 @@ module.exports = Class({
 				return this;
 			};
 		} else { // listen to one
-			var bound = fn.bind(bind || this);
+			var bound = typeof fn === 'function' ? fn.bind(bind || this) : fn;
 			var element = this.element;
 			if (element.addEventListener){
 				element.addEventListener(type, bound, false);

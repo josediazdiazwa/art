@@ -60,10 +60,66 @@ var CanvasNode = Class(Transform, {
 	// interaction
 	
 	indicate: function(cursor, tooltip){
+		this._cursor = cursor;
+		this._tooltip = tooltip;
 		return this.invalidate();
 	},
 
-	// Rendering
+	hitTest: function(x, y){
+		if (this._invisible) return null;
+		var point = this.inversePoint(x, y);
+		if (!point) return null;
+		return this.localHitTest(point.x, point.y);
+	},
+
+	// events
+
+	dispatch: function(event){
+		var events = this._events,
+			listeners = events && events[event.type];
+		if (listeners){
+			listeners = listeners.slice(0);
+			for (var i = 0, l = listeners.length; i < l; i++){
+				var fn = listeners[i], result;
+				if (typeof fn == 'function')
+					result = fn.call(this, event);
+				else
+					result = fn.handleEvent(event);
+				if (result === false) event.preventDefault();
+			}
+		}
+		if (this.container && this.container.dispatch){
+			this.container.dispatch(event);
+		}
+	},
+
+	subscribe: function(type, fn, bind){
+		if (typeof type != 'string'){ // listen type / fn with object
+			var subscriptions = [];
+			for (var t in type) subscriptions.push(this.subscribe(t, type[t]));
+			return function(){ // unsubscribe
+				for (var i = 0, l = subscriptions.length; i < l; i++)
+					subscriptions[i]();
+				return this;
+			};
+		} else { // listen to one
+			var bound = typeof fn === 'function' ? fn.bind(bind || this) : fn,
+				events = this._events || (this._events = {}),
+				listeners = events[type] || (events[type] = []);
+			listeners.push(bound);
+			return function(){
+				// unsubscribe
+				for (var i = 0, l = listeners.length; i < l; i++){
+					if (listeners[i] === bound){
+						listeners.splice(i, 1);
+						break;
+					}
+				}
+			}
+		}
+	},
+
+	// rendering
 
 	renderTo: function(context, xx, yx, xy, yy, x, y){
 		var opacity = this._opacity;

@@ -112,12 +112,38 @@ module.exports = Class({
 		return this.scaleTo(width / w, height / h);
 	},
 
+	/*
+	inverse: function(){
+		var a = this.xx, b = this.yx,
+			c = this.xy, d = this.yy,
+			e = this.x, f = this.y;
+		if (a * d - b * c == 0) return null;
+		return new Transform(
+			d/(a * d-b * c), b/(b * c-a * d),
+			c/(b * c-a * d), a/(a * d-b * c),
+			(d * e-c * f)/(b * c-a * d), (b * e-a * f)/(a * d-b * c)
+		);
+	},
+	*/
+
+	inversePoint: function(x, y){
+		var a = this.xx, b = this.yx,
+			c = this.xy, d = this.yy,
+			e = this.x, f = this.y;
+		var det = b * c - a * d;
+		if (det == 0) return null;
+		return {
+			x: (d * (e - x) + c * (y - f)) / det,
+			y: (a * (f - y) + b * (x - e)) / det
+		};
+	},
+
 	point: function(x, y){
 		var m = this;
 		return {
 			x: m.xx * x + m.xy * y + m.x,
 			y: m.yx * x + m.yy * y + m.y
 		};
-	}
+	}	
 
 });

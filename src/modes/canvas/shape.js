@@ -21,6 +21,22 @@ module.exports = Class(Base, {
 		if (height != null) this.height = height;
 		return this.invalidate();
 	},
+
+	localHitTest: function(x, y){
+		if (!this._fill) return null;
+		if (this.width == null || this.height == null){
+			var context = Base._genericContext, commands = this._commands;
+			if (!commands) return null;
+			context.beginPath();
+			for (var i = 0, l = commands.length; i < l; i++)
+				commands[i](context);
+			return context.isPointInPath(x, y) ? this : null;
+		}
+		if (x > 0 && y > 0 && x < this.width && y < this.height){
+			return this;
+		}
+		return null;
+	},
 	
 	renderShapeTo: function(context){
 		if (this._invisible || !this._commands || (!this._fill && !this._stroke)) return null;

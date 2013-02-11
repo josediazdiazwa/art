@@ -9,9 +9,16 @@ module.exports = Class(Node, Container, {
 		this.height = height;
 		this.children = [];
 	},
-	
-	// rendering
-	
+
+	localHitTest: function(x, y){
+		var children = this.children, i = children.length;
+		while (i--){
+			var hit = children[i].hitTest(x, y);
+			if (hit) return hit;
+		}
+		return null;
+	},
+
 	renderLayerTo: function(context, xx, yx, xy, yy, x, y){
 		if (this._invisible) return null;
 
@@ -25,12 +32,10 @@ module.exports = Class(Node, Container, {
 		yx = t * this.xx + yy * this.yx;
 		yy = t * this.xy + yy * this.yy;
 
-		var children = this.children, hitTarget;
+		var children = this.children;
 		for (var i = 0, l = children.length; i < l; i++){
-			var hit = children[i].renderTo(context, xx, yx, xy, yy, x, y);
-			if (hit) hitTarget = hit;
+			children[i].renderTo(context, xx, yx, xy, yy, x, y);
 		}
-		return hitTarget;
 	}
 
 });

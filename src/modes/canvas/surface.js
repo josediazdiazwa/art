@@ -2,8 +2,6 @@ var Class = require('../../core/class');
 var Container = require('../../core/container');
 var Element = require('../../dom/element');
 
-var hitContext = null, currentHitTarget, hitX = 0, hitY = 0;
-
 var fps = 1000 / 60, invalids = [], renderTimer, renderInvalids = function(){
 	clearTimeout(renderTimer);
 	renderTimer = null;
@@ -16,6 +14,8 @@ var fps = 1000 / 60, invalids = [], renderTimer, renderInvalids = function(){
 	}
 };
 
+var previousHit = null;
+
 var CanvasSurface = Class(Element, Container, {
 
 	initialize: function(width, height){
@@ -24,13 +24,56 @@ var CanvasSurface = Class(Element, Container, {
 		this.children = [];
 		this._valid = true;
 		if (width != null && height != null) this.resize(width, height);
-		
-		if (context.isPointInPath)
-			element.addEventListener('mousemove', function(event){
-				hitContext = context;
-				hitX = event.clientX;
-				hitY = event.clientY;
-			}, false);
+
+		element.addEventListener('mousemove', this, false);
+		element.addEventListener('mouseout', this, false);
+		element.addEventListener('mouseover', this, false);
+		element.addEventListener('mouseup', this, false);
+		element.addEventListener('mousedown', this, false);
+		element.addEventListener('click', this, false);
+	},
+
+	handleEvent: function(event){
+		if (event.clientX == null) return;
+		var element = this.element,
+			rect = element.getBoundingClientRect(),
+			x = event.clientX - rect.left - element.clientLeft,
+			y = event.clientY - rect.top - element.clientTop,
+			hit = this.hitTest(x, y);
+
+		if (hit !== previousHit){
+			if (previousHit){
+				previousHit.dispatch({
+					type: 'mouseout',
+					target: previousHit,
+					relatedTarget: hit
+				});
+			}
+			if (hit){
+				hit.dispatch({
+					type: 'mouseover',
+					target: hit,
+					relatedTarget: previousHit
+				});
+			}
+			previousHit = hit;
+			var hitCursor = '', hitTooltip = '';
+			while (hit){
+				if (!hitCursor && hit._cursor){
+					hitCursor = hit._cursor;
+					if (hitTooltip) break;
+				}
+				if (!hitTooltip && hit._tooltip){
+					hitTooltip = hit._tooltip;
+					if (hitCursor) break;
+				}
+				hit = hit.container;
+			}
+			this.element.style.cursor = hitCursor;
+			this.element.title = hitTooltip;
+		}
+
+		if (hit) hit.dispatch(event);
 	},
 
 	resize: function(width, height){
@@ -61,15 +104,23 @@ var CanvasSurface = Class(Element, Container, {
 		}
 	},
 
+	hitTest: function(x, y){
+		if (x < 0 || y < 0 || x > this.width || y > this.height) return null;
+		var children = this.children, i = children.length;
+		while (i--){
+			var hit = children[i].hitTest(x, y);
+			if (hit) return hit;
+		}
+		return null;
+	},
+
 	render: function(){
-		var children = this.children, context = this.context, hitTarget;
+		var children = this.children, context = this.context;
 		context.setTransform(1, 0, 0, 1, 0, 0);
 		context.clearRect(0, 0, this.width, this.height);
 		for (var i = 0, l = children.length; i < l; i++){
-			var hit = children[i].renderTo(context, 1, 0, 0, 1, 0, 0);
-			if (hit) hitTarget = hit;
+			children[i].renderTo(context, 1, 0, 0, 1, 0, 0);
 		}
-		if (hitContext == context) currentHitTarget = hitTarget;
 	}
 
 });

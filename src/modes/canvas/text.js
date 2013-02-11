@@ -49,6 +49,18 @@ module.exports = Class(Base, {
 		return this.invalidate();
 	},
 
+	// Interaction
+
+	localHitTest: function(x, y){
+		if (!this._fill) return null;
+		if (x > 0 && y > 0 && x < this.width && y < this.height){
+			return this;
+		}
+		return null;
+	},
+
+	// Rendering
+
 	renderShapeTo: function(context){
 		if (this._invisible || !this._text || (!this._fill && !this._stroke)) return null;
 		context.transform(this.xx, this.yx, this.xy, this.yy, this.x, this.y);
@@ -77,8 +89,6 @@ module.exports = Class(Base, {
 			for (var i = 0; i < l; i++)
 				context.strokeText(lines[i], 0, y + i * lineHeight);
 		}
-		
-		return /*hitContext == context && context.isPointInPath(hitX, hitY) ? this :*/ null;
 	}
 
 });
