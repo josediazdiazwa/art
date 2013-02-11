@@ -69,8 +69,6 @@ module.exports = Class(Base, {
 			context.lineJoin = this._strokeJoin;
 			context.stroke();
 		}
-
-		return /*hitContext == context && context.isPointInPath(hitX, hitY) ? this :*/ null;
 	}
 
 });

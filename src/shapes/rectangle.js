@@ -1,56 +1,45 @@
-var Class = require('../core/class');
-var Mode = require('../modes/current');
+var Shape = require('./generic');
 
-module.exports = Class(Mode.Shape, {
-	
-	shape_initialize: Mode.Shape.prototype.initialize,
-	shape_draw: Mode.Shape.prototype.draw,
-	
-	initialize: function(width, height, radius){
-		this.shape_initialize();
-		if (width != null && height != null) this.draw(width, height, radius);
-	},
-	
-	draw: function(width, height, radius){
+module.exports = Shape(function(width, height, radius){
 
-		var path = new Mode.Path();
+	this.width = width;
+	this.height = height;
 
-		if (!radius){
+	var path = this.path;
 
-			path.move(0, 0).line(width, 0).line(0, height).line(-width, 0).line(0, -height);
+	if (!radius){
 
-		} else {
+		path.move(0, 0).line(width, 0).line(0, height).line(-width, 0).line(0, -height);
 
-			if (typeof radius == 'number') radius = [radius, radius, radius, radius];
+	} else {
 
-			var tl = radius[0], tr = radius[1], br = radius[2], bl = radius[3];
+		if (typeof radius == 'number') radius = [radius, radius, radius, radius];
 
-			if (tl < 0) tl = 0;
-			if (tr < 0) tr = 0;
-			if (bl < 0) bl = 0;
-			if (br < 0) br = 0;
+		var tl = radius[0], tr = radius[1], br = radius[2], bl = radius[3];
 
-			path.move(0, tl);
+		if (tl < 0) tl = 0;
+		if (tr < 0) tr = 0;
+		if (bl < 0) bl = 0;
+		if (br < 0) br = 0;
 
-			if (width < 0) path.move(width, 0);
-			if (height < 0) path.move(0, height);
+		path.move(0, tl);
 
-			if (tl > 0) path.arc(tl, -tl);
-			path.line(Math.abs(width) - (tr + tl), 0);
+		if (width < 0) path.move(width, 0);
+		if (height < 0) path.move(0, height);
 
-			if (tr > 0) path.arc(tr, tr);
-			path.line(0, Math.abs(height) - (tr + br));
+		if (tl > 0) path.arc(tl, -tl);
+		path.line(Math.abs(width) - (tr + tl), 0);
 
-			if (br > 0) path.arc(-br, br);
-			path.line(- Math.abs(width) + (br + bl), 0);
+		if (tr > 0) path.arc(tr, tr);
+		path.line(0, Math.abs(height) - (tr + br));
 
-			if (bl > 0) path.arc(-bl, -bl);
-			path.line(0, - Math.abs(height) + (bl + tl));
-		}
-		
-		path.close();
+		if (br > 0) path.arc(-br, br);
+		path.line(- Math.abs(width) + (br + bl), 0);
 
-		return this.shape_draw(path, width, height);
+		if (bl > 0) path.arc(-bl, -bl);
+		path.line(0, - Math.abs(height) + (bl + tl));
 	}
+	
+	path.close();
 
 });

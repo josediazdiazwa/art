@@ -20,7 +20,7 @@ module.exports = Class(Node, Container, {
 	},
 
 	renderLayerTo: function(context, xx, yx, xy, yy, x, y){
-		if (this._invisible) return null;
+		if (this._invisible) return;
 
 		x = xx * this.x + xy * this.y + x;
 		y = yx * this.x + yy * this.y + y;

@@ -1,17 +1,37 @@
-var Class = require('../core/class');
-var Rectangle = require('./rectangle');
+var Shape = require('./generic');
 
-module.exports = Class(Rectangle, {
+module.exports = Shape(function(width, height){
 
-	rectangle_draw: Rectangle.prototype.draw,
+	this.width = width;
+	this.height = height;
 
-	initialize: function(width, height){
-		this.shape_initialize();
-		if (width != null && height != null) this.draw(width, height);
-	},
+	var path = this.path;
 
-	draw: function(width, height){
-		return this.rectangle_draw(width, height, ((width < height) ? width : height) / 2);
+	if (width < 0){
+		path.move(width, 0);
+		width = -width;
+	}
+	if (height < 0){
+		path.move(0, height);
+		height = -height;
+	}
+
+	if (width < height){
+		var r = width / 2;
+		path.move(0, r)
+			.arc(width, 0, r)
+			.line(0, height - width)
+			.arc(-width, 0, r)
+			.line(0, width - height);
+	} else {
+		var r = height / 2;
+		path.move(r, 0)
+			.line(width - height, 0)
+			.arc(0, height, r)
+			.line(height - width, 0)
+			.arc(0, -height, r);
 	}
 	
+	path.close();
+
 });
