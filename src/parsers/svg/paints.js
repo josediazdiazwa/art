@@ -132,6 +132,7 @@ SVGParser.implement({
 				}
 				
 				// TODO: Always use rotation angle, but offset stops instead to adjust
+				// TODO2: Never use rotation angle because measuring is deprecated
 				var bb = this.getBBox(target);
 				x1 = this.parseBBLength(x1, bb, 'x');
 				y1 = this.parseBBLength(y1, bb, 'y');

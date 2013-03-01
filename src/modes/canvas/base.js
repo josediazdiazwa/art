@@ -1,6 +1,6 @@
 var Class = require('../../core/class');
 var Color = require('../../core/color');
-var Transform = require('../../core/Transform');
+var Transform = require('../../core/transform');
 var Node = require('./node');
 
 var genericCanvas = document.createElement('canvas'),
