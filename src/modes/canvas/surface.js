@@ -46,14 +46,16 @@ var CanvasSurface = Class(Element, Container, {
 				previousHit.dispatch({
 					type: 'mouseout',
 					target: previousHit,
-					relatedTarget: hit
+					relatedTarget: hit,
+					sourceEvent: event
 				});
 			}
 			if (hit){
 				hit.dispatch({
 					type: 'mouseover',
 					target: hit,
-					relatedTarget: previousHit
+					relatedTarget: previousHit,
+					sourceEvent: event
 				});
 			}
 			previousHit = hit;
