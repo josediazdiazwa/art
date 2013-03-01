@@ -14,7 +14,7 @@ var fps = 1000 / 60, invalids = [], renderTimer, renderInvalids = function(){
 	}
 };
 
-var previousHit = null;
+var previousHit = null, previousHitSurface = null;
 
 var CanvasSurface = Class(Element, Container, {
 
@@ -59,23 +59,30 @@ var CanvasSurface = Class(Element, Container, {
 				});
 			}
 			previousHit = hit;
-			var hitCursor = '', hitTooltip = '';
-			while (hit){
-				if (!hitCursor && hit._cursor){
-					hitCursor = hit._cursor;
-					if (hitTooltip) break;
-				}
-				if (!hitTooltip && hit._tooltip){
-					hitTooltip = hit._tooltip;
-					if (hitCursor) break;
-				}
-				hit = hit.container;
-			}
-			this.element.style.cursor = hitCursor;
-			this.element.title = hitTooltip;
+			previousHitSurface = this;
+			this.refreshCursor();
 		}
 
 		if (hit) hit.dispatch(event);
+	},
+
+	refreshCursor: function(){
+		if (previousHitSurface !== this) return;
+		var hit = previousHit, hitCursor = '', hitTooltip = '';
+		while (hit){
+			if (!hitCursor && hit._cursor){
+				hitCursor = hit._cursor;
+				if (hitTooltip) break;
+			}
+			if (!hitTooltip && hit._tooltip){
+				hitTooltip = hit._tooltip;
+				if (hitCursor) break;
+			}
+			hit = hit.container;
+		}
+		// TODO: No way to set cursor/title on the surface
+		this.element.style.cursor = hitCursor;
+		this.element.title = hitTooltip;
 	},
 
 	resize: function(width, height){
@@ -123,6 +130,7 @@ var CanvasSurface = Class(Element, Container, {
 		for (var i = 0, l = children.length; i < l; i++){
 			children[i].renderTo(context, 1, 0, 0, 1, 0, 0);
 		}
+		this.refreshCursor();
 	}
 
 });

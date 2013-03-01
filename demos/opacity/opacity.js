@@ -47,6 +47,7 @@ blue.subscribe({
 
 group2.subscribe('click', function(){
 	this.blend(1);
+	blue.indicate('wait');
 });
 
 art.inject(document.body);
