@@ -75,10 +75,7 @@ var timer = setInterval(function(){
 		green.eject();
 	else {
 		green.injectBefore(group2);
-		console.log('injecting' + green.parentNode);
 		verifyState();
-		//green.injectBefore(group2);
-	 	//group2.injectBefore(green);
 	}
 	group2.rotate(1, 50, 50);
 }, 500);

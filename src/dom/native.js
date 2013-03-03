@@ -34,7 +34,7 @@ module.exports = Class({
 
 	eject: function(){
 		var element = this.element, parent = element.parentNode;
-		if (parent) parent.removeChild(element);
+		if (parent) parent.removeChild(element); // TODO: VML Nodes are dead after being ejected
 		return this;
 	},
 
