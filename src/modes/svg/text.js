@@ -110,39 +110,33 @@ module.exports = Class(Base, {
 	
 	// TODO: Unify path injection with gradients and imagefills
 
-	base_inject: Base.prototype.inject,
+	base_place: Base.prototype._place,
 
-	inject: function(container){
-		this.base_inject(container);
-		this._injectPaths();
-		return this;
-	},
-
-	base_eject: Base.prototype.eject,
-	
-	eject: function(){
-		if (this.container){
+	_place: function(){
+		if (this.parentNode){
+			this._injectPaths();
+		} else {
 			this._ejectPaths();
-			this.base_eject();
-			this.container = null;
 		}
-		return this;
+		return this.base_place();
 	},
 	
 	_injectPaths: function(){
 		var paths = this.pathElements;
-		if (!this.container || !paths) return;
-		var defs = this.container.defs;
+		if (!this.parentNode || !paths) return;
+		var defs = this.parentNode.defs;
 		for (var i = 0, l = paths.length; i < l; i++)
 			defs.appendChild(paths[i]);
 	},
 	
 	_ejectPaths: function(){
 		var paths = this.pathElements;
-		if (!this.container || !paths) return;
-		var defs = this.container.defs;
-		for (var i = 0, l = paths; i < l; i++)
-			defs.removeChild(paths[i]);
+		if (!paths) return;
+		for (var i = 0, l = paths; i < l; i++){
+			var path = paths[i];
+			if (path.parentNode)
+				path.parentNode.removeChild(paths[i]);
+		}
 	},
 	
 	_createPaths: function(path){
@@ -168,7 +162,7 @@ module.exports = Class(Base, {
 	_whileInDocument: function(fn, bind){
 		// Temporarily inject into the document
 		var element = this.element,
-		    container = this.container,
+		    container = this.parentNode,
 			parent = element.parentNode,
 			sibling = element.nextSibling,
 			body = element.ownerDocument.body,

@@ -1,5 +1,5 @@
 var Class = require('../../core/class');
-var Container = require('../../core/container');
+var Container = require('../../dom/container');
 var Node = require('./node');
 var DOM = require('./dom');
 
@@ -14,5 +14,5 @@ module.exports = Class(Node, Container, {
 		this.defs = DOM.createElement('defs');
 		this.element.appendChild(this.defs);
 	}
-	
+
 });

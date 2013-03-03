@@ -1,5 +1,5 @@
 var Class = require('../../core/class');
-var Container = require('../../core/container');
+var Container = require('../../dom/container');
 var Node = require('./node');
 
 module.exports = Class(Node, Container, {
@@ -8,15 +8,18 @@ module.exports = Class(Node, Container, {
 
 	initialize: function(){
 		this.element_initialize();
-		this.children = [];
 	},
 
 	element_toExpression: Node.prototype.toExpression,
 
 	toExpression: function(){
 		var artGroup = this.artVar.property('Group'),
-		    grab = artGroup.construct().property('grab'),
-			children = this.children.map(function(child){ return child.toExpression(); });
+		    grab = artGroup.construct().property('grab');
+		var children = [], node = this.firstChild;
+		while (node){
+			children.push(node.toExpression());
+			node = node.nextSibling;
+		}
 		return this.element_toExpression(grab.call.apply(grab, children));
 	}
 

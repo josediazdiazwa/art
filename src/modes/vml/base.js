@@ -32,7 +32,7 @@ module.exports = Class(Node, {
 	/* transform */
 	
 	_transform: function(){
-		var container = this.container;
+		var container = this.parentNode;
 		
 		// Active Transformation Matrix
 		var m = container ? new Transform(container._activeTransform).transform(this) : this;

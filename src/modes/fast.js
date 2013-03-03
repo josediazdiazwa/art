@@ -1,6 +1,6 @@
-var DOM = require('./dom');
+var VML = require('./vml');
 var Canvas = require('./canvas');
-//var Flash = require('./flash/index');
+//var Flash = require('./flash');
 
 var hasCanvas = function(){
 
@@ -20,7 +20,7 @@ var hasFlash = function(){
 };
 */
 
-var MODE = hasCanvas() ? Canvas : /*hasFlash() ? ART.Flash :*/ DOM;
+var MODE = hasCanvas() ? Canvas : /*hasFlash() ? Flash :*/ VML;
 
 exports.Surface = MODE.Surface;
 exports.Path = MODE.Path;

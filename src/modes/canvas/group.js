@@ -1,5 +1,5 @@
 var Class = require('../../core/class');
-var Container = require('../../core/container');
+var Container = require('../../dom/container');
 var Node = require('./node');
 
 module.exports = Class(Node, Container, {
@@ -7,14 +7,16 @@ module.exports = Class(Node, Container, {
 	initialize: function(width, height){
 		this.width = width;
 		this.height = height;
-		this.children = [];
 	},
 
 	localHitTest: function(x, y){
-		var children = this.children, i = children.length;
-		while (i--){
-			var hit = children[i].hitTest(x, y);
+		var i = 0;
+		var node = this.lastChild;
+		while (node){
+			var hit = node.hitTest(x, y);
 			if (hit) return hit;
+			node = node.previousSibling;
+			if (i++ > 100){ debugger; throw new Error('recursion'); }
 		}
 		return null;
 	},
@@ -32,9 +34,12 @@ module.exports = Class(Node, Container, {
 		yx = t * this.xx + yy * this.yx;
 		yy = t * this.xy + yy * this.yy;
 
-		var children = this.children;
-		for (var i = 0, l = children.length; i < l; i++){
-			children[i].renderTo(context, xx, yx, xy, yy, x, y);
+		var i = 0;
+		var node = this.firstChild;
+		while (node){
+			node.renderTo(context, xx, yx, xy, yy, x, y);
+			node = node.nextSibling;
+			if (i++ > 100){ debugger; throw new Error('recursion'); }
 		}
 	}
 

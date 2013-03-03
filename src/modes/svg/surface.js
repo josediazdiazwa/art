@@ -1,6 +1,6 @@
 var Class = require('../../core/class');
-var Container = require('../../core/container');
-var Element = require('../../dom/element');
+var Container = require('../../dom/container');
+var Element = require('../../dom/native');
 var DOM = require('./dom');
 
 module.exports = Class(Element, Container, {
@@ -21,10 +21,6 @@ module.exports = Class(Element, Container, {
 		this.width = width;
 		this.height = height;
 		return this;
-	},
-	
-	toElement: function(){
-		return this.element;
 	}
 
 });

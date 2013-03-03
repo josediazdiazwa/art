@@ -1,6 +1,6 @@
 var Class = require('../../core/class');
 var Transform = require('../../core/transform');
-var Element = require('../../dom/element');
+var Element = require('../../dom/shadow');
 var DOM = require('./dom');
 
 module.exports = Class(Element, Transform, {
@@ -11,8 +11,8 @@ module.exports = Class(Element, Transform, {
 		element.setAttribute('id', 'e' + this.uid);
 	},
 	
-	/* transforms */
-	
+	// transforms
+
 	_transform: function(){
 		var m = this;
 		this.element.setAttribute('transform', 'matrix(' + [m.xx, m.yx, m.xy, m.yy, m.x, m.y] + ')');

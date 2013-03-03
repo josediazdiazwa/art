@@ -1,6 +1,6 @@
 var Class = require('../../core/class');
 var Transform = require('../../core/transform');
-var Element = require('../../dom/element');
+var Element = require('../../dom/shadow');
 var DOM = require('./dom');
 
 module.exports = Class(Element, Transform, {
@@ -10,36 +10,17 @@ module.exports = Class(Element, Transform, {
 		var element = this.element = DOM.createElement(tag);
 		//element.setAttribute('id', 'e' + this.uid);
 	},
-	
-	/* dom */
 
-	art_element_inject: Element.prototype.inject,
-	
-	inject: function(container){
-		this.eject();
-		this.container = container;
-		container.children.push(this);
-		this._transform();
-		this.art_element_inject(container);
-		
-		return this;
-	},
-
-	art_element_eject: Element.prototype.eject,
-
-	eject: function(){
-		if (this.container){
-			var siblings = this.container.children,
-			    i = siblings.length;
-			while (i--)
-				if (siblings[i] === this)
-					siblings.splice(i, 1);
-			this.container = null;
-			this.art_element_eject();
+	_place: function(){
+		if (this.parentNode){
+			console.log('transforming');
+			this._transform();
+			var t = this._activeTransform;
+			if (t)
+			console.log([t.xx, t.xy, t.x].join(', '));
 		}
-		return this;
 	},
-
+	
 	// visibility
 	
 	hide: function(){

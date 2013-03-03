@@ -1,6 +1,6 @@
 var Class = require('../../core/class');
-var Container = require('../../core/container');
-var Element = require('../../dom/element');
+var Container = require('../../dom/container');
+var Element = require('../../dom/native');
 
 var fps = 1000 / 60, invalids = [], renderTimer, renderInvalids = function(){
 	clearTimeout(renderTimer);
@@ -21,7 +21,6 @@ var CanvasSurface = Class(Element, Container, {
 	initialize: function(width, height){
 		var element = this.element = document.createElement('canvas');
 		var context = this.context = element.getContext('2d');
-		this.children = [];
 		this._valid = true;
 		if (width != null && height != null) this.resize(width, height);
 
@@ -78,7 +77,7 @@ var CanvasSurface = Class(Element, Container, {
 				hitTooltip = hit._tooltip;
 				if (hitCursor) break;
 			}
-			hit = hit.container;
+			hit = hit.parentNode;
 		}
 		// TODO: No way to set cursor/title on the surface
 		this.element.style.cursor = hitCursor;
@@ -94,10 +93,6 @@ var CanvasSurface = Class(Element, Container, {
 		return this;
 	},
 	
-	toElement: function(){
-		return this.element;
-	},
-	
 	invalidate: function(left, top, width, height){
 		if (this._valid){
 			this._valid = false;
@@ -111,24 +106,31 @@ var CanvasSurface = Class(Element, Container, {
 				}
 			}
 		}
+		return this;
 	},
 
 	hitTest: function(x, y){
 		if (x < 0 || y < 0 || x > this.width || y > this.height) return null;
-		var children = this.children, i = children.length;
-		while (i--){
-			var hit = children[i].hitTest(x, y);
+		var i = 0;
+		var node = this.lastChild;
+		while (node){
+			var hit = node.hitTest(x, y);
 			if (hit) return hit;
+			node = node.previousSibling;
+			if (i++ > 100){ debugger; throw new Error('recursion'); }
 		}
 		return null;
 	},
 
 	render: function(){
-		var children = this.children, context = this.context;
+		var node = this.firstChild, context = this.context;
 		context.setTransform(1, 0, 0, 1, 0, 0);
 		context.clearRect(0, 0, this.width, this.height);
-		for (var i = 0, l = children.length; i < l; i++){
-			children[i].renderTo(context, 1, 0, 0, 1, 0, 0);
+		var i = 0;
+		while (node){
+			node.renderTo(context, 1, 0, 0, 1, 0, 0);
+			node = node.nextSibling;
+			if (i++ > 100){ debugger; throw new Error('recursion'); }
 		}
 		this.refreshCursor();
 	}

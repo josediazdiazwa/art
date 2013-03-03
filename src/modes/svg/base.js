@@ -10,47 +10,33 @@ module.exports = Class(Node, {
 
 	initialize: function(tag){
 		this.element_initialize(tag);
+		this.brushes = {};
 		this.fill();
 		this.stroke();
 	},
 	
-	/* insertions */
-
-	element_inject: Node.prototype.inject,
-	
-	inject: function(container){
-		this.eject();
-		this.container = container;
-		this._injectBrush('fill');
-		this._injectBrush('stroke');
-		this.element_inject(container);
-		return this;
-	},
-
-	element_eject: Node.prototype.eject,
-	
-	eject: function(){
-		if (this.container){
-			this.element_eject();
+	_place: function(){
+		if (this.parentNode){
+			this._injectBrush('fill');
+			this._injectBrush('stroke');
+		} else {
 			this._ejectBrush('fill');
 			this._ejectBrush('stroke');
-			this.container = null;
 		}
 		return this;
 	},
 	
 	_injectBrush: function(type){
-		if (!this.container) return;
+		if (!this.parentNode) return;
 		var brush = type == 'fill' ? this.fillBrush : this.strokeBrush;
-		if (brush) this.container.defs.appendChild(brush);
+		if (brush) this.parentNode.defs.appendChild(brush);
 	},
 	
 	_ejectBrush: function(type){
-		if (!this.container) return;
 		var brush = this[type + 'Brush'];
-		if (brush) this.container.defs.removeChild(brush);
+		if (brush && brush.parentNode) brush.parentNode.removeChild(brush);
 	},
-	
+
 	/* styles */
 	
 	_createBrush: function(type, tag){

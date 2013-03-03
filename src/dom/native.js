@@ -1,12 +1,34 @@
 var Class = require('../core/class');
 
+function elementFrom(node){
+	if (node.toElement) return node.toElement();
+	if (node.getDOMNode) return node.getDOMNode();
+	return node;
+}
+
 module.exports = Class({
 
-	// dom
+	// conventions
 
-	inject: function(element){
-		if (element.element) element = element.element;
-		element.appendChild(this.element);
+	toElement: function(){
+		return this.element;
+	},
+
+	getDOMNode: function(){
+		return this.toElement();
+	},
+
+	// placement
+
+	inject: function(container){
+		(container.containerElement || elementFrom(container))
+			.appendChild(this.element);
+		return this;
+	},
+
+	injectBefore: function(sibling){
+		var element = elementFrom(sibling);
+		element.parentNode.insertBefore(this.element, element);
 		return this;
 	},
 
@@ -28,7 +50,14 @@ module.exports = Class({
 				return this;
 			};
 		} else { // listen to one
-			var bound = typeof fn === 'function' ? fn.bind(bind || this) : fn;
+			if (!bind) bind = this;
+			var bound;
+			if (typeof fn === 'function'){
+				bound = fn.bind ? fn.bind(bind)
+					: function(){ return fn.apply(bind, arguments); };
+			} else {
+				bound = fn;
+			}
 			var element = this.element;
 			if (element.addEventListener){
 				element.addEventListener(type, bound, false);

@@ -1,8 +1,9 @@
 var Class = require('../../core/class');
 var Transform = require('../../core/transform');
 var Modulizer = require('./modulizer');
+var Element = require('../../dom/dummy');
 
-module.exports = Class(Modulizer, Transform, {
+module.exports = Class(Modulizer, Transform, Element, {
 
 	initialize: function(){
 		this._calls = [];
@@ -36,21 +37,6 @@ module.exports = Class(Modulizer, Transform, {
 		return expr;
 	},
 
-	// insertions
-	
-	inject: function(container){
-		this.eject();
-		if (container.children) container.children.push(this);
-		this.container = container;
-		return this;
-	},
-	
-	eject: function(){
-		if (this.container && this.container.children) this.container.children.erase(this);
-		this.container = null;
-		return this;
-	},
-	
 	// transforms
 	
 	blend: function(opacity){ return this._addCall('blend', arguments); },
