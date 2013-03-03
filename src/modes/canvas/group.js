@@ -10,13 +10,11 @@ module.exports = Class(Node, Container, {
 	},
 
 	localHitTest: function(x, y){
-		var i = 0;
 		var node = this.lastChild;
 		while (node){
 			var hit = node.hitTest(x, y);
 			if (hit) return hit;
 			node = node.previousSibling;
-			if (i++ > 100){ debugger; throw new Error('recursion'); }
 		}
 		return null;
 	},
@@ -34,12 +32,10 @@ module.exports = Class(Node, Container, {
 		yx = t * this.xx + yy * this.yx;
 		yy = t * this.xy + yy * this.yy;
 
-		var i = 0;
 		var node = this.firstChild;
 		while (node){
 			node.renderTo(context, xx, yx, xy, yy, x, y);
 			node = node.nextSibling;
-			if (i++ > 100){ debugger; throw new Error('recursion'); }
 		}
 	}
 

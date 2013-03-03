@@ -111,13 +111,11 @@ var CanvasSurface = Class(Element, Container, {
 
 	hitTest: function(x, y){
 		if (x < 0 || y < 0 || x > this.width || y > this.height) return null;
-		var i = 0;
 		var node = this.lastChild;
 		while (node){
 			var hit = node.hitTest(x, y);
 			if (hit) return hit;
 			node = node.previousSibling;
-			if (i++ > 100){ debugger; throw new Error('recursion'); }
 		}
 		return null;
 	},
@@ -126,11 +124,9 @@ var CanvasSurface = Class(Element, Container, {
 		var node = this.firstChild, context = this.context;
 		context.setTransform(1, 0, 0, 1, 0, 0);
 		context.clearRect(0, 0, this.width, this.height);
-		var i = 0;
 		while (node){
 			node.renderTo(context, 1, 0, 0, 1, 0, 0);
 			node = node.nextSibling;
-			if (i++ > 100){ debugger; throw new Error('recursion'); }
 		}
 		this.refreshCursor();
 	}
