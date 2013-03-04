@@ -3,6 +3,7 @@ var Class = require('../core/class');
 function elementFrom(node){
 	if (node.toElement) return node.toElement();
 	if (node.getDOMNode) return node.getDOMNode();
+	if (node.getNode) return node.getNode();
 	return node;
 }
 
@@ -15,6 +16,10 @@ module.exports = Class({
 	},
 
 	getDOMNode: function(){
+		return this.toElement();
+	},
+
+	getNode: function(){
 		return this.toElement();
 	},
 
