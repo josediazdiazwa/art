@@ -21,3 +21,7 @@ These modules provide access to the core rendering classes:
 
 There are also helper classes to work with vector paths, 3x3 transformation
 matrices, colors, morphing, common shapes etc.
+
+#Demos
+
+[See ./demos](./demos)

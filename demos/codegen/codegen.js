@@ -16,5 +16,13 @@ var rectangle = new ART.Rectangle(100, 100).rotate(45).stroke('#0F0', 2);
 
 art.grab(triangle, rectangle);
 
-alert(art.toExpression().toString());
-alert(art.toModule().toString());
+function showResult(text) {
+  var result = document.createElement('textarea');
+  result.style.width = '500px';
+  result.style.height = '300px';
+  result.value = text;
+  document.body.appendChild(result);
+}
+
+showResult(art.toExpression().toString());
+showResult(art.toModule().toString());
