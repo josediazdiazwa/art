@@ -4,7 +4,7 @@ var otherModes = [
 //	require('../../src/modes/script'),
 	require('../../src/modes/canvas')
 ];
-var ART = require('../../art');
+var ART = require('../../index');
 
 var result = [];
 
@@ -80,5 +80,7 @@ for (var name in ART){
 }
 
 var ta = document.createElement('textarea');
+ta.style.width = '500px';
+ta.style.height = '500px';
 ta.value = result.join('');
 document.body.appendChild(ta);

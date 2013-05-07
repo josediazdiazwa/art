@@ -1,5 +1,5 @@
 require('../mode');
-var ART = require('../../art');
+var ART = require('../../index');
 
 var art = ART.Surface(1000, 600);
 

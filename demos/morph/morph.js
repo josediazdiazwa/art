@@ -1,5 +1,5 @@
 require('../mode');
-var ART = require('../../art');
+var ART = require('../../index');
 var Morph = require('../../src/morph/path');
 
 

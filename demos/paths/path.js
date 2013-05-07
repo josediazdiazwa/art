@@ -1,5 +1,5 @@
 ﻿require('../mode');
-var ART = require('../../art');
+var ART = require('../../index');
 var MetricsPath = require('../../src/metrics/path');
 var SVGPath = require('../../src/modes/svg/path');
 
@@ -50,7 +50,7 @@ if (document.createElementNS){
 
 var l = curve.length;
 
-setInterval(function(){ 
+setInterval(function(){
 
 	var i = ((+new Date()) / 50) % l;
 

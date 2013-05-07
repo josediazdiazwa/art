@@ -1,5 +1,5 @@
 require('../../src/modes/script');
-var ART = require('../../art');
+var ART = require('../../index');
 
 var art = new ART.Surface(100, 100);
 

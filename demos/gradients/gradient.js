@@ -1,6 +1,6 @@
 require('../mode');
 require('../fonts/moderna');
-var ART = require('../../art');
+var ART = require('../../index');
 var MetricsPath = require('../../src/metrics/path');
 
 //addEvent('domready', function(){
@@ -30,17 +30,17 @@ function convertPointsToAngle(x1, y1, x2, y2, stops){
 
 	var c = Math.cos(angle), s = -Math.sin(angle),
 		l = Math.abs(c) + Math.abs(s);
-	
+
 	/*var o1 = (x1 * c) - (y1 * s);
 	var o2 = ((0.5 - (c * l / 2)) * c) - ((0.5 - (s * l / 2)) * s);
 	o2 = (x2 * c) - (y2 * s);* /
-	
+
 	var xx = 0.5 - (c * l / 2);
 	var yy = 0.5 - (s * l / 2);
-	
+
 	var o = ((x1 - xx) * c + (y1 - yy) * s) / l;
 	var scale = distance / l;
-	
+
 	var newStops = {};
 	for (var offset in stops){
 		newStops[(offset * scale + o).toFixed(2)] = stops[offset];
@@ -55,7 +55,7 @@ function convertPointsToAngle(x1, y1, x2, y2, stops){
 
 	var x2 = Math.cos(angle), y2 = Math.sin(angle),
 		l = (Math.abs(x2) + Math.abs(y2)) / 2;
-	
+
 	x2 *= l; y2 *= l;
 
 	var x3 = -Math.sin(angle) * 40, y3 = Math.cos(angle) * 40;
@@ -148,8 +148,8 @@ var txt = new ART.Text('Hello', 'bold 60px "Arial"')
 	.scale(2,2)
 	.fillRadial({ 0.0: '#000', '0.9': '#F00', '1.0': '#FFF' }, 100, 50, 70, 40, 50, 50)
 	.inject(group);
-	
-	
+
+
 //txt.fillLinear(['#CCF', '#FFF'], 0, 0, 0, 50);
 //gt.fill();
 
@@ -162,13 +162,13 @@ gt.move(100, 350).scale(-2, 1);
 rt.rotate(20, 0, 0).scale(2, -1);
 
 //gt.transform(-1, 0, -0.5, 1, 0, 0);
-	
+
 //group.scale(1, 0.8);
 
 //	gt.moveTo(200, 10);
 
 	//gt.scaleTo(-1.5, 1);
-	
+
 	window.boundingBox = new ART.Rectangle(200, 200);
 window.boundingBox.stroke('#0C0').inject(art);
 
@@ -191,7 +191,7 @@ setInterval(function(){
 	txt.fillRadial({ 0.0: '#000', '0.9': '#F00', '1.0': '#FFF' }, 100 * (Math.abs(Math.cos(angle * Math.PI / 90))), 50, 70, 40, 50, 50)
 
 	//gt.rotateTo(0, 0, 0);
-	
+
 	//gt.scaleTo(0.5, 1);
 
 	//div.setStyle('background-image', '-moz-linear-gradient(' + angle + 'deg, #000, #F00, #FFF)');
@@ -202,7 +202,7 @@ setInterval(function(){
 
 	var x2 = Math.cos(angle), y2 = Math.sin(angle),
 		l = (Math.abs(x2) + Math.abs(y2)) / 2;
-	
+
 	x2 *= l; y2 *= l;
 
 	var x3 = -Math.sin(angle) * 40, y3 = Math.cos(angle) * 40;

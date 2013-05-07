@@ -1,7 +1,7 @@
 require('../mode');
 require('../fonts/moderna');
 require('../fonts/moderna.bold');
-var ART = require('../../art');
+var ART = require('../../index');
 var MetricsPath = require('../../src/metrics/path');
 var SVGPath = require('../../src/modes/svg/path');
 
@@ -138,15 +138,15 @@ setInterval(function(){
 
 	var x2 = Math.cos(angle), y2 = Math.sin(angle),
 		l = (Math.abs(x2) + Math.abs(y2)) / 2;
-	
+
 	x2 *= l; y2 *= l;
 
 	var x3 = -Math.sin(angle) * 40, y3 = Math.cos(angle) * 40;
 
 	//tang.draw(new ART.Path().move(x1 * 100, y1 * 100).line((x2) * 100, (y2) * 100).move(x3, y3).line(-x3 * 2, -y3 * 2));
-	
+
 	el.rotate(1,200,100);
-	
+
 
 
 	// Wedge
