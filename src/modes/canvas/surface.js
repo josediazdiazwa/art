@@ -14,6 +14,8 @@ var fps = 1000 / 60, invalids = [], renderTimer, renderInvalids = function(){
 	}
 };
 
+var resolution = window.devicePixelRatio || 1;
+
 var previousHit = null, previousHitSurface = null;
 
 var CanvasSurface = Class(Element, Container, {
@@ -86,13 +88,15 @@ var CanvasSurface = Class(Element, Container, {
 
 	resize: function(width, height){
 		var element = this.element;
-		element.setAttribute('width', width);
-		element.setAttribute('height', height);
+		element.setAttribute('width', width * resolution);
+		element.setAttribute('height', height * resolution);
+		element.style.width = width + 'px';
+		element.style.height = height + 'px';
 		this.width = width;
 		this.height = height;
 		return this;
 	},
-	
+
 	invalidate: function(left, top, width, height){
 		if (this._valid){
 			this._valid = false;
@@ -122,10 +126,10 @@ var CanvasSurface = Class(Element, Container, {
 
 	render: function(){
 		var node = this.firstChild, context = this.context;
-		context.setTransform(1, 0, 0, 1, 0, 0);
+		context.setTransform(resolution, 0, 0, resolution, 0, 0);
 		context.clearRect(0, 0, this.width, this.height);
 		while (node){
-			node.renderTo(context, 1, 0, 0, 1, 0, 0);
+			node.renderTo(context, resolution, 0, 0, resolution, 0, 0);
 			node = node.nextSibling;
 		}
 		this.refreshCursor();
