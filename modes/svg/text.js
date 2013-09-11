@@ -5,7 +5,7 @@ var Surface = require('./surface');
 var DOM = require('./dom');
 var createElement = DOM.createElement;
 
-var ua = navigator && navigator.userAgent,
+var ua = typeof navigator !== 'undefined' && navigator && navigator.userAgent,
     hasBaseline = !(/opera|safari|ie/i).test(ua) || (/chrome/i).test(ua);
 
 var fontAnchors = { left: 'start', center: 'middle', right: 'end' },

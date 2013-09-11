@@ -5,6 +5,6 @@ exports.Group = require('./vml/group');
 exports.Text = require('./vml/text');
 
 var DOM = require('./vml/dom');
-DOM.init(document);
+if (typeof document !== 'undefined') DOM.init(document);
 
 require('./current').setCurrent(exports);

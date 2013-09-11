@@ -3,14 +3,14 @@ var VML = require('./vml');
 
 var hasSVG = function(){
 
-	var implementation = document.implementation;
+	var implementation = typeof document !== 'undefined' && document.implementation;
 	return (implementation && implementation.hasFeature && implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
 
 };
 
 var hasVML = function(){
 
-	return document.namespaces;
+	return typeof document !== 'undefined' && document.namespaces;
 
 };
 

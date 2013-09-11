@@ -14,7 +14,7 @@ var fps = 1000 / 60, invalids = [], renderTimer, renderInvalids = function(){
 	}
 };
 
-var resolution = window.devicePixelRatio || 1;
+var resolution = typeof window !== 'undefined' && window.devicePixelRatio || 1;
 
 var previousHit = null, previousHitSurface = null;
 

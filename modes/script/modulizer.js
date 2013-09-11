@@ -1,4 +1,4 @@
-var AST = require('../../../lib/ast-js/ast');
+var AST = require('../../lib/ast-js/ast');
 
 var artVar = new AST.Variable('ART'),
 	moduleVar = new AST.Variable('module'),

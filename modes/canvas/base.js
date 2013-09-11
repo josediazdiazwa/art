@@ -3,8 +3,8 @@ var Color = require('../../core/color');
 var Transform = require('../../core/transform');
 var Node = require('./node');
 
-var genericCanvas = document.createElement('canvas'),
-	genericContext = genericCanvas.getContext && genericCanvas.getContext('2d');
+var genericCanvas = typeof document !== 'undefined' && document.createElement('canvas'),
+	genericContext = genericCanvas && genericCanvas.getContext && genericCanvas.getContext('2d');
 
 function recolorImage(img, color1, color2){
 	// TODO: Fix this experimental implementation

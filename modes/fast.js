@@ -4,7 +4,7 @@ var Canvas = require('./canvas');
 
 var hasCanvas = function(){
 
-	var canvas = document.createElement('canvas');
+	var canvas = typeof document !== 'undefined' && document.createElement('canvas');
 	return canvas && !!canvas.getContext;
 
 };

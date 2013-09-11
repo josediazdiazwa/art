@@ -1,6 +1,6 @@
 var SVGParser = require('./core');
-var Slick = require('../../../lib/slick/Source/slick').Slick;
-var SheetCascade = require('../../../lib/Sheet.Cascade').SheetCascade;
+var Slick = require('../../lib/slick/Source/slick').Slick;
+var SheetCascade = require('../../lib/Sheet.Cascade').SheetCascade;
 
 var applyStyles = SVGParser.prototype.applyStyles;
 
