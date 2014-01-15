@@ -3,16 +3,16 @@ var Base = require('./base');
 var Path = require('./path');
 
 module.exports = Class(Base, {
-	
+
 	base_initialize: Base.prototype.initialize,
-	
+
 	initialize: function(path, width, height){
 		this.base_initialize();
 		this.width = width;
 		this.height = height;
 		if (path != null) this.draw(path);
 	},
-	
+
 	draw: function(path, width, height){
 		if (!(path instanceof Path)) path = new Path(path);
 		this.path = path;
@@ -37,15 +37,35 @@ module.exports = Class(Base, {
 		}
 		return null;
 	},
-	
+
 	renderShapeTo: function(context){
-		if (this._invisible || !this._commands || (!this._fill && !this._stroke)) return null;
+		if (this._invisible || !this._commands || (!this._fill && !this._stroke)) {
+			return null;
+		}
 		context.transform(this.xx, this.yx, this.xy, this.yy, this.x, this.y);
 		var commands = this._commands,
-			fill = this._fill,
-			stroke = this._stroke;
+		    fill = this._fill,
+		    stroke = this._stroke,
+		    dash = this._strokeDash;
 
 		context.beginPath();
+
+		if (dash) {
+			if (context.setLineDash) {
+				context.setLineDash(dash);
+			} else {
+				// TODO: Remove when FF supports setLineDash.
+				context.mozDash = dash;
+			}
+			// TODO: Create fallback to other browsers.
+		} else {
+			if (context.setLineDash) {
+				context.setLineDash([]);
+			} else {
+				context.mozDash = null;
+			}
+		}
+
 		for (var i = 0, l = commands.length; i < l; i++)
 			commands[i](context);
 

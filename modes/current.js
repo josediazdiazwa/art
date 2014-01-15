@@ -6,6 +6,7 @@ exports.Surface = warning;
 exports.Path = warning;
 exports.Shape = warning;
 exports.Group = warning;
+exports.ClippingRectangle = warning;
 exports.Text = warning;
 
 exports.setCurrent = function(mode){

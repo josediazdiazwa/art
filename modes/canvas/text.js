@@ -11,7 +11,7 @@ module.exports = Class(Base, {
 		this.base_initialize();
 		this.draw.apply(this, arguments);
 	},
-	
+
 	draw: function(text, font, alignment, path){
 		var em;
 		if (typeof font == 'string'){
@@ -32,16 +32,17 @@ module.exports = Class(Base, {
 		this._fontSize = em;
 		this._text = lines;
 		this._alignment = fontAnchors[alignment] || alignment || 'left';
-		
+
 		var context = Base._genericContext;
 
 		context.font = this._font;
 		context.textAlign = this._alignment;
 		context.textBaseline = 'middle';
-		
-		var lines = this._text, l = lines.length, width = 0;
+
+		lines = this._text;
+		var l = lines.length, width = 0;
 		for (var i = 0; i < l; i++){
-			w = context.measureText(lines[i]).width;
+			var w = context.measureText(lines[i]).width;
 			if (w > width) width = w;
 		}
 		this.width = width;
@@ -62,31 +63,52 @@ module.exports = Class(Base, {
 	// Rendering
 
 	renderShapeTo: function(context){
-		if (this._invisible || !this._text || (!this._fill && !this._stroke)) return null;
+		if (this._invisible || !this._text || (!this._fill && !this._stroke)) {
+			return null;
+		}
 		context.transform(this.xx, this.yx, this.xy, this.yy, this.x, this.y);
-		var fill = this._fill, stroke = this._stroke, text = this._text;
-		
+		var fill = this._fill,
+		    stroke = this._stroke,
+		    text = this._text,
+		    dash = this._strokeDash;
+
 		context.font = this._font;
 		context.textAlign = this._alignment;
 		context.textBaseline = 'middle';
-		
+
 		var em = this._fontSize,
-			y = em / 2,
-			lineHeight = 1.1 * em,
-			lines = this._text,
-			l = lines.length;
-		
+		    y = em / 2,
+		    lineHeight = 1.1 * em,
+		    lines = text,
+		    l = lines.length;
+
 		if (fill){
 			context.fillStyle = fill;
 			for (var i = 0; i < l; i++)
 				context.fillText(lines[i], 0, y + i * lineHeight);
 		}
 		if (stroke){
+			if (dash) {
+				if (context.setLineDash) {
+					context.setLineDash(dash);
+				} else {
+					// TODO: Remove when FF supports setLineDash.
+					context.mozDash = dash;
+				}
+				// TODO: Create fallback to other browsers.
+			} else {
+				if (context.setLineDash) {
+					context.setLineDash([]);
+				} else {
+					context.mozDash = null;
+				}
+			}
+
 			context.strokeStyle = stroke;
 			context.lineWidth = this._strokeWidth;
 			context.lineCap = this._strokeCap;
 			context.lineJoin = this._strokeJoin;
-			for (var i = 0; i < l; i++)
+			for (i = 0; i < l; i++)
 				context.strokeText(lines[i], 0, y + i * lineHeight);
 		}
 	}

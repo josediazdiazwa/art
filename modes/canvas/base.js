@@ -4,7 +4,7 @@ var Transform = require('../../core/transform');
 var Node = require('./node');
 
 var genericCanvas = typeof document !== 'undefined' && document.createElement('canvas'),
-	genericContext = genericCanvas && genericCanvas.getContext && genericCanvas.getContext('2d');
+    genericContext = genericCanvas && genericCanvas.getContext && genericCanvas.getContext('2d');
 
 function recolorImage(img, color1, color2){
 	// TODO: Fix this experimental implementation
@@ -28,10 +28,14 @@ var Base = Class(Node, {
 		this._pendingFill = null;
 		this._fillTransform = null;
 		this._stroke = null;
+		this._strokeCap = null;
+		this._strokeDash = null;
+		this._strokeJoin = null;
+		this._strokeWidth = null;
 	},
-	
+
 	/* styles */
-	
+
 	_addColors: function(gradient, stops){
 		// Enumerate stops, assumes offsets are enumerated in order
 		// TODO: Sort. Chrome doesn't always enumerate in expected order but requires stops to be specified in order.
@@ -42,7 +46,7 @@ var Base = Class(Node, {
 		return gradient;
 	},
 
-	
+
 	fill: function(color){
 		if (arguments.length > 1) return this.fillLinear(arguments);
 		if (this._pendingFill) this._pendingFill();
@@ -61,7 +65,7 @@ var Base = Class(Node, {
 		centerX += centerX - focusX;
 		centerY += centerY - focusY;
 
-		if (radiusX == 0) return this.fillLinear(stops);
+		if (radiusX === 0 || radiusX === '0') return this.fillLinear(stops);
 		var ys = radiusY / radiusX;
 
 		if (this._pendingFill) this._pendingFill();
@@ -139,15 +143,16 @@ var Base = Class(Node, {
 			h = height ? height / img.height : 1;
 		if (color1 != null) img = recolorImage(img, color1, color2);
 		this._fill = genericContext.createPattern(img, 'repeat');
-		this._fillTransform = new Transform(w, 0, 0, h);
+		this._fillTransform = new Transform(w, 0, 0, h, left || 0, top || 0);
 		return this.invalidate();
 	},
 
-	stroke: function(color, width, cap, join){
+	stroke: function(color, width, cap, join, dash){
 		this._stroke = color ? new Color(color).toString() : null;
 		this._strokeWidth = (width != null) ? width : 1;
 		this._strokeCap = (cap != null) ? cap : 'round';
 		this._strokeJoin = (join != null) ? join : 'round';
+		this._strokeDash = dash;
 		return this.invalidate();
 	},
 
