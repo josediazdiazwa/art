@@ -14,7 +14,7 @@ module.exports = Class(Node, {
 		this.fill();
 		this.stroke();
 	},
-	
+
 	_place: function(){
 		if (this.parentNode){
 			this._injectBrush('fill');
@@ -25,20 +25,20 @@ module.exports = Class(Node, {
 		}
 		return this;
 	},
-	
+
 	_injectBrush: function(type){
 		if (!this.parentNode) return;
 		var brush = type == 'fill' ? this.fillBrush : this.strokeBrush;
 		if (brush) this.parentNode.defs.appendChild(brush);
 	},
-	
+
 	_ejectBrush: function(type){
 		var brush = this[type + 'Brush'];
 		if (brush && brush.parentNode) brush.parentNode.removeChild(brush);
 	},
 
 	/* styles */
-	
+
 	_createBrush: function(type, tag){
 		this._ejectBrush(type);
 
@@ -80,7 +80,7 @@ module.exports = Class(Node, {
 		this.element.removeAttribute('fill-opacity');
 		return gradient;
 	},
-	
+
 	_setColor: function(type, color){
 		this._ejectBrush(type);
 		this[type + 'Brush'] = null;
@@ -105,7 +105,7 @@ module.exports = Class(Node, {
 		var gradient = this._createGradient('fill', 'radialGradient', stops);
 
 		gradient.setAttribute('gradientUnits', 'userSpaceOnUse');
-		
+
 
 		if (focusX == null) focusX = (this.left || 0) + (this.width || 0) * 0.5;
 		if (focusY == null) focusY = (this.top || 0) + (this.height || 0) * 0.5;
@@ -113,7 +113,7 @@ module.exports = Class(Node, {
 		if (radiusX == null) radiusX = (this.width || 0) * 0.5;
 		if (centerX == null) centerX = focusX;
 		if (centerY == null) centerY = focusY;
-		
+
 		var ys = radiusY / radiusX;
 
 		gradient.setAttribute('fx', focusX);
@@ -124,13 +124,13 @@ module.exports = Class(Node, {
 
 		gradient.setAttribute('cx', centerX);
 		gradient.setAttribute('cy', centerY / ys);
-		
+
 		return this;
 	},
 
 	fillLinear: function(stops, x1, y1, x2, y2){
 		var gradient = this._createGradient('fill', 'linearGradient', stops);
-		
+
 		if (arguments.length == 5){
 			gradient.setAttribute('gradientUnits', 'userSpaceOnUse');
 		} else {
@@ -177,7 +177,7 @@ module.exports = Class(Node, {
 				g = (color1.green - color2.green) / (255 * 3),
 				b = (color1.blue - color2.blue) / (255 * 3),
 				a = (color1.alpha - color2.alpha) / 3;
-			
+
 			var matrix = [
 				r, r, r, 0, color2.red / 255,
 				g, g, g, 0, color2.green / 255,
@@ -200,13 +200,13 @@ module.exports = Class(Node, {
 		}
 
 		pattern.appendChild(image);
-		
+
 		pattern.setAttribute('patternUnits', 'userSpaceOnUse');
 		pattern.setAttribute('patternContentsUnits', 'userSpaceOnUse');
-		
+
 		pattern.setAttribute('x', left || 0);
 		pattern.setAttribute('y', top || 0);
-		
+
 		pattern.setAttribute('width', width);
 		pattern.setAttribute('height', height);
 
@@ -216,14 +216,16 @@ module.exports = Class(Node, {
 		return this;
 	},
 
-	stroke: function(color, width, cap, join){
+	stroke: function(color, width, cap, join, dash){
 		var element = this.element;
 		element.setAttribute('stroke-width', (width != null) ? width : 1);
 		element.setAttribute('stroke-linecap', (cap != null) ? cap : 'round');
 		element.setAttribute('stroke-linejoin', (join != null) ? join : 'round');
-
+		if (dash) {
+			element.setAttribute('stroke-dasharray', dash.join(','));
+		}
 		this._setColor('stroke', color);
 		return this;
 	}
-	
+
 });

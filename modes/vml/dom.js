@@ -6,7 +6,11 @@ var styleSheet, styledTags = {}, styleTag = function(tag){
 
 exports.init = function(document){
 
-	var namespaces = document.namespaces;
+	var namespaces;
+	try { // IE9 workaround: sometimes it throws here
+		namespaces = document.namespaces;
+	} catch (e) {
+	}
 	if (!namespaces) return false;
 
 	namespaces.add('av', 'urn:schemas-microsoft-com:vml');
@@ -28,4 +32,4 @@ exports.init = function(document){
 exports.createElement = function(tag){
 	if (!(tag in styledTags)) styleTag(tag);
 	return document.createElement('av:' + tag);
-}
+};
