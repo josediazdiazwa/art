@@ -20,6 +20,7 @@ exports.Surface = MODE.Surface;
 exports.Path = MODE.Path;
 exports.Shape = MODE.Shape;
 exports.Group = MODE.Group;
+exports.ClippingRectangle = MODE.ClippingRectangle;
 exports.Text = MODE.Text;
 
 require('./current').setCurrent(exports);

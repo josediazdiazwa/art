@@ -36,6 +36,6 @@ var VMLSurface = Class(Element, Container, {
 	
 });
 
-VMLSurface.tagName = 'vml';
+VMLSurface.tagName = 'av:vml';
 
 module.exports = VMLSurface;

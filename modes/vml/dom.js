@@ -25,6 +25,8 @@ exports.init = function(document){
 	styleTag('textpath');
 	styleTag('group');*/
 
+	styleTag('vml');
+
 	return true;
 
 };
