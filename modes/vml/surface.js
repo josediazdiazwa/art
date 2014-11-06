@@ -5,10 +5,10 @@ var DOM = require('./dom');
 
 var precision = 100;
 
-module.exports = Class(Element, Container, {
+var VMLSurface = Class(Element, Container, {
 	
-	initialize: function VMLSurface(width, height){
-		this.element = document.createElement('vml');
+	initialize: function VMLSurface(width, height, existingElement){
+		this.element = existingElement || document.createElement('vml');
 		this.containerElement = DOM.createElement('group');
 		this.element.appendChild(this.containerElement);
 		if (width != null && height != null) this.resize(width, height);
@@ -35,3 +35,7 @@ module.exports = Class(Element, Container, {
 	}
 	
 });
+
+VMLSurface.tagName = 'vml';
+
+module.exports = VMLSurface;

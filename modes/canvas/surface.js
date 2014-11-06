@@ -20,8 +20,8 @@ var previousHit = null, previousHitSurface = null;
 
 var CanvasSurface = Class(Element, Container, {
 
-	initialize: function(width, height){
-		var element = this.element = document.createElement('canvas');
+	initialize: function(width, height, existingElement){
+		var element = this.element = existingElement || document.createElement('canvas');
 		var context = this.context = element.getContext('2d');
 		this._valid = true;
 		if (width != null && height != null) this.resize(width, height);
@@ -136,5 +136,7 @@ var CanvasSurface = Class(Element, Container, {
 	}
 
 });
+
+CanvasSurface.tagName = 'canvas';
 
 module.exports = CanvasSurface;

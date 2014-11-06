@@ -3,10 +3,10 @@ var Container = require('../../dom/container');
 var Element = require('../../dom/native');
 var DOM = require('./dom');
 
-module.exports = Class(Element, Container, {
+var SVGSurface = Class(Element, Container, {
 
-	initialize: function SVGSurface(width, height){
-		var element = this.element = DOM.createElement('svg');
+	initialize: function SVGSurface(width, height, existingElement){
+		var element = this.element = existingElement || DOM.createElement('svg');
 		element.setAttribute('xmlns', DOM.NS);
 		element.setAttribute('version', 1.1);
 		var defs = this.defs = DOM.createElement('defs');
@@ -24,3 +24,7 @@ module.exports = Class(Element, Container, {
 	}
 
 });
+
+SVGSurface.tagName = 'svg';
+
+module.exports = SVGSurface;
